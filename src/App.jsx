@@ -440,30 +440,88 @@ function Dashboard({ session }) {
     )
 }
 
-import ForgotPassword from './pages/ForgotPassword'
-import UpdatePassword from './pages/UpdatePassword'
+import LoadingHeart from './components/LoadingHeart'
+import logger from './utils/logger'
 
 function App() {
     const [session, setSession] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session)
-            setLoading(false)
-        })
+        let mounted = true;
+        const LOADING_TIMEOUT_MS = 7000; // 7 seconds timeout
+
+        const initSession = async () => {
+            try {
+                logger.group('Auth Initialization');
+                logger.info('Starting session check...');
+
+                // Race between getSession and a timeout
+                const sessionPromise = supabase.auth.getSession();
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Session check timed out')), LOADING_TIMEOUT_MS)
+                );
+
+                const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]);
+
+                if (mounted) {
+                    logger.info('Session retrieved:', session ? 'User found' : 'No user');
+                    setSession(session);
+                    setLoading(false);
+                }
+            } catch (err) {
+                logger.error('Auth Init Error:', err);
+                if (mounted) {
+                    // If timeout or error, we stop loading.
+                    // If it was a timeout, session remains null, so it might redirect to login (which is safe).
+                    // Or we could set a specific error state to show a "Retry" button.
+                    if (err.message === 'Session check timed out') {
+                        logger.warn('Force stopping loading due to timeout.');
+                        setLoading(false);
+                        // Note: By setting loading false with null session, it will redirect to /login.
+                        // This prevents the infinite white screen.
+                    } else {
+                        setError(err);
+                        setLoading(false);
+                    }
+                }
+            } finally {
+                logger.groupEnd();
+            }
+        };
+
+        initSession();
 
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session)
+            logger.info('Auth State Change:', _event);
+            if (mounted) {
+                setSession(session);
+                // Ensure loading is cleared if an event comes in (e.g. after a slow load)
+                setLoading(false);
+            }
         })
 
-        return () => subscription.unsubscribe()
+        return () => {
+            mounted = false;
+            subscription.unsubscribe();
+        }
     }, [])
 
     if (loading) {
-        return <div className="container">Loading...</div>
+        return <LoadingHeart message="Loading" />;
+    }
+
+    if (error) {
+        return (
+            <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
+                <h3>Something went wrong 😓</h3>
+                <p>We couldn't load your session.</p>
+                <button className="primary" onClick={() => window.location.reload()}>Retry</button>
+            </div>
+        )
     }
 
     return (
