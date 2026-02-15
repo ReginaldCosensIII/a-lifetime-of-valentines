@@ -8,6 +8,7 @@ export default function PartnerRegister() {
     const [email, setEmail] = useState('');
     const [tempPassword, setTempPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [isSystemLocked, setIsSystemLocked] = useState(false);
@@ -198,15 +199,24 @@ export default function PartnerRegister() {
 
                                 <div style={{ borderTop: '1px dashed #ddd', paddingTop: '1rem', marginTop: '0.5rem' }}>
                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#d6336c' }}>Set New Password</label>
-                                    <input
-                                        type="password"
-                                        value={newPassword}
-                                        onChange={(e) => setNewPassword(e.target.value)}
-                                        placeholder="Create your permanent password"
-                                        required
-                                        minLength={6}
-                                        style={{ width: '100%' }}
-                                    />
+                                    <div className="password-wrapper">
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
+                                            placeholder="Create your permanent password"
+                                            required
+                                            minLength={6}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="password-toggle-btn"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            aria-label="Toggle password visibility"
+                                        >
+                                            {showPassword ? "👁️" : "🙈"}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <button type="submit" className="primary" style={{ width: '100%', marginTop: '0.5rem', fontSize: '1rem', padding: '1rem' }} disabled={loading}>

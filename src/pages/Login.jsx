@@ -6,6 +6,7 @@ export default function Login() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [isSystemLocked, setIsSystemLocked] = useState(false);
@@ -107,14 +108,23 @@ export default function Login() {
                                 <label style={{ fontWeight: '500', color: '#555' }}>Password</label>
                                 <Link to="/forgot-password" style={{ fontSize: '0.8rem', color: '#d6336c', textDecoration: 'none' }}>Forgot?</Link>
                             </div>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                placeholder="••••••••"
-                                style={{ width: '100%' }}
-                            />
+                            <div className="password-wrapper">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    placeholder="••••••••"
+                                />
+                                <button
+                                    type="button"
+                                    className="password-toggle-btn"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    aria-label="Toggle password visibility"
+                                >
+                                    {showPassword ? "👁️" : "🙈"}
+                                </button>
+                            </div>
                         </div>
 
                         <button type="submit" className="primary" style={{ width: '100%', marginTop: '0.5rem', fontSize: '1rem', padding: '1rem' }} disabled={loading}>

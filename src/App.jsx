@@ -44,7 +44,7 @@ function Dashboard({ session }) {
 
             if (ownerData) {
                 // FOUND AS OWNER
-                console.log('User found as Owner.');
+                // console.log('User found as Owner.');
 
                 // Check if "Start Journey" has been clicked (status='active') OR if data exists
                 const hasData = (ownerData.media && ownerData.media[0] && ownerData.media[0].count > 0) ||
@@ -53,7 +53,7 @@ function Dashboard({ session }) {
                 const isJourneyStarted = ownerData.status === 'active';
 
                 if (!isJourneyStarted && !hasData) {
-                    console.log('Journey not started & no data. Showing Demo.');
+                    // console.log('Journey not started & no data. Showing Demo.');
                     setShowDemo(true);
                     setCouple({
                         ...mockData.couple,
@@ -76,7 +76,7 @@ function Dashboard({ session }) {
 
             if (partnerData) {
                 // FOUND AS PARTNER
-                console.log('User found as Partner.');
+                // console.log('User found as Partner.');
 
                 const hasData = (partnerData.media && partnerData.media[0] && partnerData.media[0].count > 0) ||
                     (partnerData.entries && partnerData.entries[0] && partnerData.entries[0].count > 0);
@@ -84,7 +84,7 @@ function Dashboard({ session }) {
                 const isJourneyStarted = partnerData.status === 'active';
 
                 if (!isJourneyStarted && !hasData) {
-                    console.log('Journey not started (Partner) & no data. Showing Demo.');
+                    // console.log('Journey not started (Partner) & no data. Showing Demo.');
                     setShowDemo(true);
                     setCouple({
                         ...mockData.couple,
@@ -97,7 +97,7 @@ function Dashboard({ session }) {
                 }
             } else {
                 // NEW VISITOR
-                console.log('No couple data found. Enabling Visitor Demo Mode.');
+                // console.log('No couple data found. Enabling Visitor Demo Mode.');
                 setShowDemo(true);
                 setCouple(mockData.couple);
             }
@@ -194,13 +194,13 @@ function Dashboard({ session }) {
             }
 
             // Log payload for debugging
-            console.log('Sending Invite with payload:', {
-                coupleId: couple?.id,
-                valentinePlans: valentinePlans || 'No plans specified',
-                partner_email: partnerEmail,
-                invite_code: couple.invite_code,
-                temp_password: '***'
-            });
+            // console.log('Sending Invite with payload:', {
+            //     coupleId: couple?.id,
+            //     valentinePlans: valentinePlans || 'No plans specified',
+            //     partner_email: partnerEmail,
+            //     invite_code: couple.invite_code,
+            //     temp_password: '***'
+            // });
 
             const { error } = await supabase.functions.invoke('send-invite', {
                 body: {

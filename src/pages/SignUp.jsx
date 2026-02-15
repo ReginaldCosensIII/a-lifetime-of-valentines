@@ -6,6 +6,7 @@ import { useNavigate, Link } from 'react-router-dom';
 export default function SignUp() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [partnerEmail, setPartnerEmail] = useState(''); // New state for partner email
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -54,9 +55,9 @@ export default function SignUp() {
             const inviteCode = generateInviteCode();
             const tempPassword = Math.random().toString(36).slice(-8); // Simple temp password
 
-            console.log('User created:', user.id);
-            console.log('Invite Code:', inviteCode);
-            console.log('Partner Temp Password:', tempPassword);
+            // console.log('User created:', user.id);
+            // console.log('Invite Code:', inviteCode);
+            // console.log('Partner Temp Password:', tempPassword);
 
             const { data, error: dbError } = await supabase.from('couples').insert([
                 {
@@ -72,7 +73,7 @@ export default function SignUp() {
                 setError(`Account created, but failed to setup couple profile. DB Error: ${dbError.message}`);
                 setLoading(false);
             } else {
-                console.log('Couple record created:', data);
+                // console.log('Couple record created:', data);
                 // Alert the user with the credentials to share
                 alert(`Account created! \n\nShare these with your partner:\nInvite Code: ${inviteCode}\nTemp Password: ${tempPassword}\n\nThey will need these to join.`);
                 navigate('/');
@@ -151,14 +152,23 @@ export default function SignUp() {
 
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#555' }}>Password</label>
-                                    <input
-                                        type="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                        placeholder="Create a password"
-                                        style={{ width: '100%' }}
-                                    />
+                                    <div className="password-wrapper">
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            required
+                                            placeholder="Create a password"
+                                        />
+                                        <button
+                                            type="button"
+                                            className="password-toggle-btn"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            aria-label="Toggle password visibility"
+                                        >
+                                            {showPassword ? "👁️" : "🙈"}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div style={{ borderTop: '1px dashed #eee', paddingTop: '1rem' }}>
