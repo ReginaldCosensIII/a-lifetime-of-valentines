@@ -105,9 +105,23 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData }) {
     }
 
 
-    // For logged-in users, if couple is null, it means they have no data yet.
-    // Do NOT fall back to mockData, otherwise they see the demo.
+    // For logged-in users, if couple is null, it means they have no data yet OR data fetch failed/timed out.
+    // Do NOT fall back to mockData.
     const displayCouple = couple;
+
+    // CRITICAL FIX: If loading finished but we have no data, show an empty state or error
+    // instead of crashing on displayCouple.partner_user_id
+    if (!displayCouple) {
+        return (
+            <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
+                <h3>Starting your journey... 💖</h3>
+                <p>We are setting up your personalized dashboard.</p>
+                <button className="primary" onClick={() => window.location.reload()}>
+                    Click to Retry
+                </button>
+            </div>
+        )
+    }
 
     return (
         <>
