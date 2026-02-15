@@ -1,0 +1,429 @@
+:root {
+  --primary-color: #d6336c;
+  --secondary-color: #ff69b4;
+  --bg-gradient: linear-gradient(135deg, #fff0f5 0%, #ffe6e6 100%);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --header-height: 70px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg-gradient);
+  color: #333;
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
+}
+
+/* Typography */
+h1,
+h2,
+h3 {
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+/* Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: var(--glass-border);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
+  overflow: hidden;
+  /* Fix content sticking out */
+}
+
+/* Buttons */
+button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  font-weight: 500;
+  border: none;
+}
+
+.primary {
+  background: linear-gradient(135deg, #ff69b4 0%, #d6336c 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 4px 10px rgba(214, 51, 108, 0.3);
+}
+
+.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(214, 51, 108, 0.4);
+}
+
+.secondary {
+  background: white;
+  color: var(--primary-color);
+  border: 1px solid #ffb6c1;
+  padding: 0.5rem 1rem;
+}
+
+.secondary:hover {
+  background: #fff0f5;
+}
+
+/* FLOATING GLASS HEADER */
+.glass-header {
+  position: sticky;
+  top: 1rem;
+  z-index: 1000;
+
+  width: 95%;
+  /* Mobile: 95% */
+  max-width: 1000px;
+  margin: 0 auto;
+  border-radius: 50px;
+  /* Pill shape */
+
+  background: rgba(255, 240, 245, 0.85);
+  /* Pink tint */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 182, 193, 0.5);
+  box-shadow: 0 4px 20px rgba(214, 51, 108, 0.15);
+
+  padding: 0.5rem 1rem;
+  /* Compact padding for mobile */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Desktop Overrides */
+@media (min-width: 768px) {
+  .glass-header {
+    width: 70%;
+    padding: 0.8rem 2rem;
+  }
+}
+
+.glass-header h1 {
+  font-size: 0.95rem;
+  /* Reduced to fit single line on small screens */
+  margin: 0;
+  display: inline-block;
+  white-space: nowrap;
+  /* Force single line */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brand-gradient-text {
+  background: linear-gradient(135deg, #d6336c 0%, #ff69b4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@media (min-width: 768px) {
+  .glass-header h1 {
+    font-size: 1.5rem;
+    /* Restore size on desktop */
+  }
+}
+
+/* Unified Button Styling */
+button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 20px;
+  /* Unified rounded pill shape */
+  font-weight: 500;
+  border: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  /* Unified font size */
+}
+
+/* Chevron Visibility Fix */
+.carousel-nav-button {
+  background: rgba(0, 0, 0, 0.3) !important;
+  /* Darker background */
+  backdrop-filter: blur(4px) !important;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  transition: background 0.3s !important;
+}
+
+.carousel-nav-button:hover {
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* DASHBOARD LAYOUT - STRICT SINGLE COLUMN */
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 700px;
+  /* Centered, readable width on desktop */
+  margin: 0 auto;
+}
+
+/* Input Overflow Fixes */
+input,
+textarea,
+select {
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.8rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.1);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* --- UI POLISH & ENHANCEMENTS --- */
+
+/* Modern Card Hover Effect */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(214, 51, 108, 0.15);
+}
+
+/* Input/Textarea Focus Polish */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.15);
+  /* Softer, wider ring */
+  transform: translateY(-1px);
+}
+
+/* Bento Grid Layout */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-auto-rows: 200px;
+  grid-auto-flow: dense;
+  gap: 1rem;
+}
+
+.bento-item {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  break-inside: avoid;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.bento-item:hover {
+  transform: scale(1.02);
+  z-index: 10;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.bento-item img,
+.bento-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.bento-item:hover img,
+.bento-item:hover video {
+  transform: scale(1.1);
+}
+
+/* Span Classes for Bento Variety */
+.bento-item.span-2 {
+  grid-column: span 2;
+}
+
+.bento-item.row-2 {
+  grid-row: span 2;
+}
+
+@media (max-width: 600px) {
+  .bento-item.span-2 {
+    grid-column: span 1;
+  }
+
+  /* Reset on mobile */
+  .bento-grid {
+    grid-auto-rows: 180px;
+  }
+}
+
+/* Hover Overlay Caption */
+.bento-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: flex-end;
+  padding: 1.5rem;
+}
+
+/* Always show overlay on mobile touches (optional), or just on hover for desktop */
+.bento-item:hover .bento-overlay {
+  opacity: 1;
+}
+
+.bento-caption {
+  color: white;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transform: translateY(10px);
+  transition: transform 0.3s ease;
+}
+
+.bento-item:hover .bento-caption {
+  transform: translateY(0);
+}
+
+/* Timeline Polish */
+.timeline-card {
+  transition: transform 0.2s ease, border-left-width 0.2s ease;
+}
+
+.timeline-card:hover {
+  transform: translateX(5px);
+  border-left-width: 8px !important;
+}
+
+/* Responsive Utilities */
+.mobile-only {
+  display: block;
+}
+
+.desktop-only {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none;
+  }
+
+  .desktop-only {
+    display: block;
+  }
+}
+
+/* Demo Banner Styles */
+.demo-banner {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border: 2px solid #ff69b4;
+  width: 90%;
+  max-width: 600px;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 600px) {
+  .demo-banner {
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 1rem;
+    bottom: 10px;
+    width: 95%;
+    border-radius: 20px;
+    text-align: center;
+  }
+
+  .demo-banner button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Password Toggle Styles */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+  /* Space for the eye icon */
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #888;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.password-toggle-btn:hover {
+  color: #d6336c;
+}
