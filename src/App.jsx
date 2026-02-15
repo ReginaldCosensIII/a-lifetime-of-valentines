@@ -338,12 +338,17 @@ function App() {
     // Data Fetching Logic (Hoisted from Dashboard)
     const fetchCoupleData = async (userId) => {
         try {
+            console.log('[App] Fetching couple data for user:', userId);
+
             // Check if owner
-            const { data: ownerData } = await supabase
+            const { data: ownerData, error: ownerError } = await supabase
                 .from('couples')
                 .select('*, media(count), entries(count)')
                 .eq('owner_user_id', userId)
                 .maybeSingle();
+
+            if (ownerError) console.error('[App] Owner Fetch Error:', ownerError);
+            if (ownerData) console.log('[App] Found as Owner:', ownerData.id);
 
             if (ownerData) {
                 // FOUND AS OWNER
@@ -352,45 +357,34 @@ function App() {
 
                 const isJourneyStarted = ownerData.status === 'active';
 
-                if (!isJourneyStarted && !hasData) {
-                    // console.log('Journey not started & no data. Showing Demo.');
-                    // FIX: Do NOT force demo for logged in users.
-                    // They should see the empty state to encourage them to start.
-                    setShowDemo(false);
-                    setCouple(ownerData);
-                } else {
-                    setCouple(ownerData);
-                    setShowDemo(false);
-                }
+                // Always use real data for logged in users
+                setCouple(ownerData);
+                setShowDemo(false);
                 return;
             }
 
             // Check if partner
-            const { data: partnerData } = await supabase
+            const { data: partnerData, error: partnerError } = await supabase
                 .from('couples')
                 .select('*, media(count), entries(count)')
                 .eq('partner_user_id', userId)
                 .maybeSingle();
 
+            if (partnerError) console.error('[App] Partner Fetch Error:', partnerError);
+            if (partnerData) console.log('[App] Found as Partner:', partnerData.id);
+
             if (partnerData) {
                 // FOUND AS PARTNER
-                const hasData = (partnerData.media && partnerData.media[0] && partnerData.media[0].count > 0) ||
-                    (partnerData.entries && partnerData.entries[0] && partnerData.entries[0].count > 0);
-
-                const isJourneyStarted = partnerData.status === 'active';
-
-                if (!isJourneyStarted && !hasData) {
-                    // FIX: Do NOT force demo for logged in users.
-                    setShowDemo(false);
-                    setCouple(partnerData);
-                } else {
-                    setCouple(partnerData);
-                    setShowDemo(false);
-                }
+                setCouple(partnerData);
+                setShowDemo(false);
             } else {
-                // NEW VISITOR
-                setShowDemo(true);
-                setCouple(mockData.couple);
+                // NEW VISITOR (But logged in? This means they have a User auth but no Couple record)
+                console.warn('[App] Logged in but no couple record found.');
+
+                // CRITICAL FIX: Do NOT show demo mode for authenticated users.
+                // Leave couple as null (or empty object) so the Dashboard can show the "Setup" state.
+                setShowDemo(false);
+                setCouple(null);
             }
 
         } catch (error) {
