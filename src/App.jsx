@@ -340,12 +340,21 @@ function App() {
         try {
             console.log('[App] Fetching couple data for user:', userId);
 
+            // TIMEOUT WRAPPER: Fail DB queries if they take > 5s
+            const DB_TIMEOUT_MS = 5000;
+            const dbTimeout = () => new Promise((_, reject) => setTimeout(() => reject(new Error('DB_QUERY_TIMEOUT')), DB_TIMEOUT_MS));
+
             // Check if owner
-            const { data: ownerData, error: ownerError } = await supabase
+            const ownerQuery = supabase
                 .from('couples')
                 .select('*, media(count), entries(count)')
                 .eq('owner_user_id', userId)
                 .maybeSingle();
+
+            const { data: ownerData, error: ownerError } = await Promise.race([
+                ownerQuery,
+                dbTimeout()
+            ]);
 
             if (ownerError) console.error('[App] Owner Fetch Error:', ownerError);
             if (ownerData) console.log('[App] Found as Owner:', ownerData.id);
@@ -364,11 +373,16 @@ function App() {
             }
 
             // Check if partner
-            const { data: partnerData, error: partnerError } = await supabase
+            const partnerQuery = supabase
                 .from('couples')
                 .select('*, media(count), entries(count)')
                 .eq('partner_user_id', userId)
                 .maybeSingle();
+
+            const { data: partnerData, error: partnerError } = await Promise.race([
+                partnerQuery,
+                dbTimeout()
+            ]);
 
             if (partnerError) console.error('[App] Partner Fetch Error:', partnerError);
             if (partnerData) console.log('[App] Found as Partner:', partnerData.id);
@@ -389,6 +403,12 @@ function App() {
 
         } catch (error) {
             console.error('Error in fetchCoupleData:', error);
+            // If it was a timeout, ensure we don't leave the app hanging.
+            // setCouple(null) will let the "Retry" screen show.
+            if (error.message === 'DB_QUERY_TIMEOUT') {
+                console.error('[App] Database query timed out. Showing Retry screen.');
+                setCouple(null);
+            }
         }
     };
 
