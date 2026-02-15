@@ -7,7 +7,7 @@ const LoadingHeart = ({ message = "Loading" }) => {
                 <div className="pulsing-heart">💖</div>
             </div>
             <div className="loading-text">
-                {message}<span className="dots"></span>
+                {message}
             </div>
         </div>
     );
