@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
-export default function PlansTimeline({ coupleId }) {
+export default function PlansTimeline({ coupleId, demoMode, demoData }) {
     const [plans, setPlans] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editingId, setEditingId] = useState(null);
@@ -14,8 +14,13 @@ export default function PlansTimeline({ coupleId }) {
     const [notes, setNotes] = useState('');
 
     useEffect(() => {
-        if (coupleId) fetchPlans();
-    }, [coupleId]);
+        if (demoMode) {
+            setPlans(demoData || []);
+            setLoading(false);
+        } else if (coupleId) {
+            fetchPlans();
+        }
+    }, [coupleId, demoMode, demoData]);
 
     const fetchPlans = async () => {
         try {

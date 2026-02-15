@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
-export default function PartnerMessage({ coupleId, currentUserId }) {
+export default function PartnerMessage({ coupleId, currentUserId, demoMode, demoData }) {
     const [message, setMessage] = useState('');
     const [senderId, setSenderId] = useState(null);
     const [lastUpdated, setLastUpdated] = useState(null);
@@ -11,6 +11,16 @@ export default function PartnerMessage({ coupleId, currentUserId }) {
     const [updating, setUpdating] = useState(false);
 
     useEffect(() => {
+        if (demoMode) {
+            if (demoData && demoData.length > 0) {
+                const msg = demoData[0];
+                setMessage(msg.message);
+                setSenderId(msg.sender_id);
+                setLastUpdated(msg.created_at);
+            }
+            return;
+        }
+
         fetchMessage();
 
         // Subscribe to changes on the couples table for real-time updates
@@ -27,7 +37,7 @@ export default function PartnerMessage({ coupleId, currentUserId }) {
         return () => {
             subscription.unsubscribe();
         };
-    }, [coupleId]);
+    }, [coupleId, demoMode, demoData]);
 
     const fetchMessage = async () => {
         const { data, error } = await supabase
@@ -137,6 +147,7 @@ export default function PartnerMessage({ coupleId, currentUserId }) {
                         placeholder="Write something sweet..."
                         style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #ddd', minHeight: '80px', fontFamily: 'inherit' }}
                         autoFocus
+                        disabled={demoMode}
                     />
                     <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', justifyContent: 'flex-end' }}>
                         <button onClick={() => setIsEditing(false)} className="secondary" style={{ fontSize: '0.9rem' }}>Cancel</button>

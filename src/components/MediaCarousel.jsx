@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
-export default function MediaCarousel({ coupleId }) {
+export default function MediaCarousel({ coupleId, demoMode, demoData }) {
     const [media, setMedia] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -10,8 +10,13 @@ export default function MediaCarousel({ coupleId }) {
     const [isAnimating, setIsAnimating] = useState(false);
 
     useEffect(() => {
-        fetchRecentMedia();
-    }, [coupleId]);
+        if (demoMode) {
+            setMedia(demoData || []);
+            setLoading(false);
+        } else if (coupleId) {
+            fetchRecentMedia();
+        }
+    }, [coupleId, demoMode, demoData]);
 
     const fetchRecentMedia = async () => {
         try {
@@ -78,7 +83,10 @@ export default function MediaCarousel({ coupleId }) {
     );
 
     const currentItem = media[currentIndex];
-    const url = supabase.storage.from('memories').getPublicUrl(currentItem.storage_path).data.publicUrl;
+
+    const url = demoMode
+        ? currentItem.url
+        : supabase.storage.from('memories').getPublicUrl(currentItem.storage_path).data.publicUrl;
 
     return (
         <div

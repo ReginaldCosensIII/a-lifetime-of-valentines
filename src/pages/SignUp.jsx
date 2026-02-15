@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { generateInviteCode } from '../lib/utils';
 import { useNavigate, Link } from 'react-router-dom';
@@ -24,7 +24,7 @@ export default function SignUp() {
                 // On error, we default to unlocked so users aren't blocked by technical issues
                 return;
             }
-            if (data && data.is_locked) {
+            if (data && (data.is_locked || data.is_signup_locked)) {
                 setIsSystemLocked(true);
             }
         } catch (err) {

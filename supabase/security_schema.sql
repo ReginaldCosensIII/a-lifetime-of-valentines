@@ -12,21 +12,19 @@ begin
   select count(*) into couple_count from public.couples;
   select count(*) into user_count from auth.users;
   
-  -- Lock if a couple exists AND it has a partner linked
-  -- OR if 2 users exist (Owner + Partner)
-  -- Actually, the request is: "After the initial signup... and the partner has joined... the pages should be disabled."
-  
-  is_locked := false;
+  -- Lock signup if ANY couple exists
+  is_locked := false; -- Legacy compatibility, maps to full lock
   
   if couple_count > 0 then
-     -- Check if partner is linked
+     -- Check if partner is linked for FULL lock
      if exists (select 1 from public.couples where partner_user_id is not null) then
         is_locked := true;
      end if;
   end if;
 
   return json_build_object(
-    'is_locked', is_locked,
+    'is_locked', is_locked, -- Fully locked (Partner joined)
+    'is_signup_locked', (couple_count > 0), -- Signup locked (Owner exists)
     'couple_count', couple_count
   );
 end;

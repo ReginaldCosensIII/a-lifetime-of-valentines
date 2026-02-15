@@ -2,13 +2,18 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
-export default function CollageView({ coupleId }) {
+export default function CollageView({ coupleId, demoMode, demoData }) {
     const [media, setMedia] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchMedia();
-    }, [coupleId]);
+        if (demoMode) {
+            setMedia(demoData || []);
+            setLoading(false);
+        } else if (coupleId) {
+            fetchMedia();
+        }
+    }, [coupleId, demoMode, demoData]);
 
     const fetchMedia = async () => {
         try {
@@ -43,13 +48,13 @@ export default function CollageView({ coupleId }) {
                     <div key={item.id} className={`bento-item ${isSpanCol ? 'span-2' : ''} ${isSpanRow ? 'row-2' : ''}`}>
                         {item.type === 'image' ? (
                             <img
-                                src={supabase.storage.from('memories').getPublicUrl(item.storage_path).data.publicUrl}
+                                src={demoMode ? item.url : supabase.storage.from('memories').getPublicUrl(item.storage_path).data.publicUrl}
                                 alt={item.caption || 'Memory'}
                                 loading="lazy"
                             />
                         ) : (
                             <video
-                                src={supabase.storage.from('memories').getPublicUrl(item.storage_path).data.publicUrl}
+                                src={demoMode ? item.url : supabase.storage.from('memories').getPublicUrl(item.storage_path).data.publicUrl}
                                 muted loop
                                 onMouseOver={e => e.target.play()}
                                 onMouseOut={e => e.target.pause()}

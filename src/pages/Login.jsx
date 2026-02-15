@@ -3,11 +3,13 @@ import { supabase } from '../lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function Login() {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [isSystemLocked, setIsSystemLocked] = useState(false);
+    const [isSignupLocked, setIsSignupLocked] = useState(false);
     const [showLockModal, setShowLockModal] = useState(false);
 
     useEffect(() => {
@@ -17,8 +19,9 @@ export default function Login() {
     const checkSystemStatus = async () => {
         try {
             const { data } = await supabase.rpc('get_system_status');
-            if (data && data.is_locked) {
-                setIsSystemLocked(true);
+            if (data) {
+                if (data.is_locked) setIsSystemLocked(true);
+                if (data.is_signup_locked) setIsSignupLocked(true);
             }
         } catch (err) {
             console.error('System check failed:', err);
@@ -45,7 +48,11 @@ export default function Login() {
 
     const handleLockedNavigation = (e, path) => {
         e.preventDefault();
-        if (isSystemLocked) {
+
+        // Granular locking logic
+        if (path === '/signup' && (isSignupLocked || isSystemLocked)) {
+            setShowLockModal(true);
+        } else if (path === '/register-partner' && isSystemLocked) {
             setShowLockModal(true);
         } else {
             navigate(path);

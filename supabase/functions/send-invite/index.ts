@@ -1,5 +1,6 @@
 
 import nodemailer from "npm:nodemailer@6.9.16";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -19,19 +20,66 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // -----------------------------------------------------------------------
+    // 1. MANUAL AUTH VERIFICATION (Bypassing Gateway)
+    // -----------------------------------------------------------------------
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('Missing Authorization header');
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+    );
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
+
+    if (authError || !user) {
+      console.error('Auth verification failed:', authError);
+      return new Response(JSON.stringify({ error: 'Unauthorized: Invalid Token' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401,
+      });
+    }
+
+    console.log(`User authenticated: ${user.id}`);
+
+    // -----------------------------------------------------------------------
+    // 2. PARSE PAYLOAD
+    // -----------------------------------------------------------------------
     const { partner_email, invite_code, temp_password, valentine_plans } = await req.json() as InvitePayload;
 
     if (!partner_email || !invite_code || !temp_password) {
       throw new Error('Missing required fields');
     }
 
+    // -----------------------------------------------------------------------
+    // 3. SEND EMAIL
+    // -----------------------------------------------------------------------
+    const hostname = Deno.env.get('SMTP_HOSTNAME');
+    const portStr = Deno.env.get('SMTP_PORT') || '587';
+    const port = parseInt(portStr);
+    const username = Deno.env.get('SMTP_USERNAME');
+
+    console.log(`[SMTP DEBUG] Host: ${hostname || 'MISSING'}, Port: ${port}, User: ${username ? 'SET' : 'MISSING'}`);
+
+    if (!hostname || !username) {
+      throw new Error('Missing SMTP_HOSTNAME or SMTP_USERNAME secret on server');
+    }
+
     const transporter = nodemailer.createTransport({
-      host: Deno.env.get('SMTP_HOSTNAME'),
-      port: parseInt(Deno.env.get('SMTP_PORT') || '587'),
+      host: hostname,
+      port: port,
+      secure: port === 465, // true for 465, false for other ports
       auth: {
-        user: Deno.env.get('SMTP_USERNAME'),
+        user: username,
         pass: Deno.env.get('SMTP_PASSWORD'),
       },
+      // Debug options to get more info from nodemailer
+      logger: true,
+      debug: true
     });
 
     const html = `
@@ -39,7 +87,7 @@ Deno.serve(async (req) => {
       <html>
         <head>
           <style>
-            body { font-family: 'Georgia', serif; background-color: #fff0f5; color: #5a2d3c; margin: 0; padding: 20px; }
+             body { font-family: 'Georgia', serif; background-color: #fff0f5; color: #5a2d3c; margin: 0; padding: 20px; }
             .container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2); border: 2px solid #ffb6c1; }
             h1 { color: #d6336c; text-align: center; font-size: 32px; margin-bottom: 10px; }
             .heart { text-align: center; font-size: 40px; margin: 20px 0; }
@@ -67,8 +115,7 @@ Deno.serve(async (req) => {
               <p>Use these credentials to join and start building our memories together.</p>
               
               <div style="text-align: center; margin-top: 30px;">
-                <a href="http://localhost:5173/register-partner" class="btn">Accept Invite</a>
-                <!-- Production Link: <a href="https://a-lifetime-of-valentines.vercel.app/register-partner" class="btn">Accept Invite</a> -->
+                <a href="${Deno.env.get('APP_URL') || 'https://a-lifetime-of-valentines.vercel.app'}/register-partner" class="btn">Accept Invite</a>
               </div>
             </div>
             <div class="footer">
@@ -92,6 +139,7 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
+    console.error('Function error:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,

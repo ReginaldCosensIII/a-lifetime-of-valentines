@@ -2,12 +2,18 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 
-export default function MediaUpload({ coupleId, onUploadComplete }) {
+export default function MediaUpload({ coupleId, onUploadComplete, demoMode, onDemoAction }) {
     const [uploading, setUploading] = useState(false);
     const [caption, setCaption] = useState('');
     const [eventYear, setEventYear] = useState(new Date().getFullYear());
 
     const handleUpload = async (event) => {
+        if (demoMode) {
+            event.preventDefault();
+            if (onDemoAction) onDemoAction();
+            return;
+        }
+
         try {
             setUploading(true);
             const file = event.target.files[0];
