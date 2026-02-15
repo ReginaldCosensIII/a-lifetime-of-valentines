@@ -166,7 +166,7 @@ export default function SignUp() {
                                             onClick={() => setShowPassword(!showPassword)}
                                             aria-label="Toggle password visibility"
                                         >
-                                            {showPassword ? "👁️" : "🙈"}
+                                            {showPassword ? "🙉" : "🙈"}
                                         </button>
                                     </div>
                                 </div>

@@ -105,8 +105,9 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData }) {
     }
 
 
-    // Otherwise fall back to pure mock data (for visitors).
-    const displayCouple = couple || mockData.couple;
+    // For logged-in users, if couple is null, it means they have no data yet.
+    // Do NOT fall back to mockData, otherwise they see the demo.
+    const displayCouple = couple;
 
     return (
         <>
@@ -463,13 +464,14 @@ function App() {
 
         const {
             data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
+        } = supabase.auth.onAuthStateChange(async (_event, session) => {
             logger.info('Auth State Change:', _event);
             if (mounted) {
                 setSession(session);
-                // If this is a login event, we might want to fetch data too
+                // If this is a login event, we MUST fetch data BEFORE stopping loading
                 if (session?.user?.id) {
-                    fetchCoupleData(session.user.id);
+                    logger.info('Auth Change: Fetching couple data...');
+                    await fetchCoupleData(session.user.id);
                 }
                 setLoading(false);
             }
