@@ -413,9 +413,11 @@ function App() {
         }
     };
 
+    const authListenerHandling = useRef(false);
+
     useEffect(() => {
         let mounted = true;
-        const LOADING_TIMEOUT_MS = 7000; // 7 seconds timeout
+        const LOADING_TIMEOUT_MS = 12000; // Increased to 12s for cold starts
 
         const initSession = async () => {
             const MIN_LOAD_TIME_MS = 2000; // Force at least 2 seconds
@@ -440,6 +442,13 @@ function App() {
                 const { data: { session: foundSession } } = raceResult;
 
                 if (mounted) {
+                    // If authListener already grabbed the session, we don't need to do anything here
+                    // to avoid double-fetching or race conditions.
+                    if (authListenerHandling.current) {
+                        logger.info('Auth listener took over. InitSession yielding.');
+                        return;
+                    }
+
                     logger.info('Session retrieved:', foundSession ? 'User found' : 'No user');
                     setSession(foundSession);
 
@@ -456,6 +465,13 @@ function App() {
                 logger.error('Auth Init Error:', err);
                 if (mounted) {
                     if (err.message === 'Session check timed out') {
+                        // CRITICAL FIX: If auth listener is working, DO NOT force stop.
+                        // Let the auth listener finish its fetch.
+                        if (authListenerHandling.current) {
+                            logger.warn('Timeout hit, but Auth Listener is active. Yielding to allow fetch to complete.');
+                            return;
+                        }
+
                         logger.warn('Force stopping loading due to timeout.');
                         setLoading(false);
                     } else {
@@ -473,9 +489,13 @@ function App() {
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            logger.info('Auth State Change:', _event);
             if (mounted) {
+                // Mark that we are handling this event
+                authListenerHandling.current = true;
+
+                logger.info('Auth State Change:', _event);
                 setSession(session);
+
                 // If this is a login event, we MUST fetch data BEFORE stopping loading
                 if (session?.user?.id) {
                     logger.info('Auth Change: Fetching couple data...');
