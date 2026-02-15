@@ -24,7 +24,12 @@ Built with **React**, **Vite**, and **Supabase**. Secure, responsive, and design
 
 ---
 
-## 🚀 How to Deploy Your Own
+## � Video Walkthrough (Coming Soon)
+A complete, step-by-step video guide on how to fork, deploy, and set up this project for you and your partner will be available here soon.
+
+---
+
+## �🚀 How to Deploy Your Own
 
 You can fork this repository and have your own private version running in minutes.
 
