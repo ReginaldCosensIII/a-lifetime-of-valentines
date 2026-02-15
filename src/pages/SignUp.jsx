@@ -100,13 +100,26 @@ export default function SignUp() {
                     {isSystemLocked ? (
                         <div style={{ textAlign: 'center', padding: '1rem' }}>
                             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔒</div>
-                            <h3 style={{ color: '#d6336c' }}>Private Instance</h3>
-                            <p style={{ color: '#666' }}>
-                                This application has already been set up by its couple.
-                                New registrations are disabled to ensure privacy.
+                            <h3 style={{ color: '#d6336c', marginBottom: '0.5rem' }}>System Locked</h3>
+                            <p style={{ color: '#666', marginBottom: '1rem', lineHeight: '1.5' }}>
+                                This instance of <strong>A Lifetime of Valentines</strong> has already been claimed by its couple.
                             </p>
-                            <p style={{ fontSize: '0.9rem', marginTop: '1rem' }}>
-                                <Link to="/login" className="primary" style={{ display: 'inline-block', textDecoration: 'none' }}>Go to Login</Link>
+                            <div style={{ background: '#fff9fa', padding: '1rem', borderRadius: '8px', border: '1px dashed #ffb6c1', marginBottom: '1.5rem' }}>
+                                <p style={{ fontSize: '0.9rem', color: '#555', marginBottom: '0.5rem' }}>
+                                    Want to create your own?
+                                </p>
+                                <a
+                                    href="https://github.com/ReginaldCosensIII/a-lifetime-of-valentines"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="secondary"
+                                    style={{ display: 'inline-block', textDecoration: 'none', fontSize: '0.9rem' }}
+                                >
+                                    Fork on GitHub ↗
+                                </a>
+                            </div>
+                            <p style={{ fontSize: '0.9rem' }}>
+                                <Link to="/login" className="primary" style={{ display: 'inline-block', textDecoration: 'none' }}>Back to Login</Link>
                             </p>
                         </div>
                     ) : (
