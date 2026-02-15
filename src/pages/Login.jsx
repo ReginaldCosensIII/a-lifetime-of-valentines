@@ -6,6 +6,7 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const [isSystemLocked, setIsSystemLocked] = useState(false);
     const [showLockModal, setShowLockModal] = useState(false);
 
