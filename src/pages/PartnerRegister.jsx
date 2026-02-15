@@ -7,7 +7,7 @@ export default function PartnerRegister() {
     const [searchParams] = useSearchParams();
     const [inviteCode, setInviteCode] = useState(searchParams.get('code') || '');
     const [email, setEmail] = useState(searchParams.get('email') || '');
-    const [tempPassword, setTempPassword] = useState('');
+    const [tempPassword, setTempPassword] = useState(searchParams.get('password') || '');
     const [newPassword, setNewPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
