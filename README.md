@@ -4,7 +4,7 @@ A private, shared digital timeline for couples to capture memories ("The Story o
 
 Built with **React**, **Vite**, and **Supabase**. Secure, responsive, and designed to be deployed for just *you and your partner*.
 
-![Dashboard Screenshot](./docs/screenshot.png)
+![Dashboard Screenshot](./docs/screenshots/alv-full-page-dashboard-ss.png)
 
 ## ✨ Features
 
@@ -13,6 +13,7 @@ Built with **React**, **Vite**, and **Supabase**. Secure, responsive, and design
 - **Message Board**: A dedicated space for sweet notes to each other.
 - **Privacy First**: Designed as a **Singleton Instance**. Once you and your partner join, the system **locks** automatically. No random strangers can sign up.
 - **Secure Sharing**: Create strictly time-limited links (e.g., 1 hour, 6 hours) to share your timeline with friends and family without giving them permanent access.
+- **Fail-Safe Auth**: Robust signup flow ensures you never get locked out during setup.
 - **Password Recovery**: Secure, email-based password reset flow for peace of mind.
 - **Mobile Optimized**: A beautiful, app-like experience on your phone.
 
@@ -24,12 +25,12 @@ Built with **React**, **Vite**, and **Supabase**. Secure, responsive, and design
 
 ---
 
-## � Video Walkthrough (Coming Soon)
+## 📹 Video Walkthrough (Coming Soon)
 A complete, step-by-step video guide on how to fork, deploy, and set up this project for you and your partner will be available here soon.
 
 ---
 
-## �🚀 How to Deploy Your Own
+## 🚀 How to Deploy Your Own
 
 You can fork this repository and have your own private version running in minutes.
 
@@ -53,12 +54,8 @@ You can fork this repository and have your own private version running in minute
 
 1.  Create a new Project in Supabase.
 2.  Go to the **SQL Editor** in the sidebar.
-3.  **Run the Schema Scripts:**
-    Copy and paste the contents of the following files (located in `/supabase`) into the SQL Editor and run them **in this order**:
-    
-    1.  `v1_mvp_schema.sql` (Core tables)
-    2.  `v2_features_schema.sql` (Sharing & Advanced features)
-    3.  `security_schema.sql` (Lockdown logic)
+3.  **Run the Consolidated Schema:**
+    Copy and paste the contents of `supabase/schema.sql` into the SQL Editor and run it. This single file sets up **everything** (tables, security policies, triggers, and functions).
 
 4.  **Get Credentials:**
     Go to **Project Settings -> API**. Copy:
@@ -99,6 +96,21 @@ This application is designed for **Privacy**.
 ## 🤝 Contributing
 
 This is a personal project, but feel free to fork and customize it for your own relationship!
+
+
+---
+
+## 📸 Screenshots
+
+| Dashboard | Join Partner |
+|-----------|--------------|
+| ![Dashboard](./docs/screenshots/alv-full-page-dashboard-ss.png) | ![Join Partner](./docs/screenshots/alv-join-partner-page-ss.png) |
+
+| Login | System Lock |
+|-------|-------------|
+| ![Login](./docs/screenshots/alv-login-page-ss.png) | ![System Lock](./docs/screenshots/alv-system-lock-page-ss.png) |
+
+---
 
 ## 📄 License
 
