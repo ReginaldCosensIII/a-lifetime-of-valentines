@@ -15,6 +15,10 @@ import ShareModal from './components/ShareModal'
 import SharedView from './pages/SharedView'
 import DemoBanner from './components/DemoBanner'
 import { mockData } from './data/mockData'
+import LoadingHeart from './components/LoadingHeart'
+import logger from './utils/logger'
+import ForgotPassword from './pages/ForgotPassword'
+import UpdatePassword from './pages/UpdatePassword'
 
 function Dashboard({ session }) {
     const [couple, setCouple] = useState(null)
@@ -230,316 +234,328 @@ function Dashboard({ session }) {
 
     const [manualInviteData, setManualInviteData] = useState(null)
 
-    if (loading) return <div className="container">Loading...</div>
+    const MIN_LOAD_TIME_MS = 2000; // Force at least 2 seconds of heart animation
+    const start = Date.now();
 
-    // If we have a couple loaded (even with mock data merged), use it.
-    // Otherwise fall back to pure mock data (for visitors).
-    const displayCouple = couple || mockData.couple;
+    try {
+        // ... logic ...
+        // Wait for both session check AND minimum time
+        const [result] = await Promise.all([
+            Promise.race([sessionPromise, timeoutPromise]),
+            new Promise(resolve => setTimeout(resolve, MIN_LOAD_TIME_MS))
+        ]);
 
-    return (
-        <>
-            <div style={{ paddingBottom: '4rem' }}>
-                {/* ... header ... */}
-                <header className="glass-header">
-                    <div>
-                        <h1 style={{ fontWeight: 'bold' }}>
-                            <span className="brand-gradient-text">A Lifetime of Valentines</span>
-                            <span> 💖</span>
-                        </h1>
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        {!displayCouple.partner_user_id && (
-                            <div className="desktop-only">
-                                <button onClick={() => setShowInviteModal(true)} className="primary" style={{ whiteSpace: 'nowrap' }}>
-                                    Invite Partner 💌
-                                </button>
-                            </div>
-                        )}
-                        <button onClick={() => setShowShareModal(true)} className="secondary" style={{ whiteSpace: 'nowrap' }}>
-                            🔗 Share
-                        </button>
-                        <button onClick={handleSignOut} className="secondary" style={{ whiteSpace: 'nowrap' }}>Sign Out</button>
-                    </div>
-                </header>
+        // ... rest of logic ...
 
-                {/* Mobile Invite Button (Stacked under header) */}
-                {!displayCouple.partner_user_id && (
-                    <div className="container mobile-only" style={{ marginTop: '0.5rem', marginBottom: '-1rem', textAlign: 'center' }}>
-                        <button onClick={() => setShowInviteModal(true)} className="primary" style={{ width: '100%' }}>
-                            Invite Partner 💌
-                        </button>
-                    </div>
-                )}
+        // ... later in file at line 233 ...
+        if (loading) return <LoadingHeart message="Loading Dashboard" />;
 
-                <div className="container" style={{ position: 'relative', zIndex: 1, marginTop: '2rem' }}>
+        // If we have a couple loaded (even with mock data merged), use it.
+        // Otherwise fall back to pure mock data (for visitors).
+        const displayCouple = couple || mockData.couple;
 
-                    {displayCouple ? (
-                        <>
-                            {showDemo && (
-                                <DemoBanner
-                                    onExit={handleExitDemo}
-                                />
-                            )}
-
-                            {/* TOP SECTION: Message Board & Carousel */}
-                            <div style={{ maxWidth: '700px', margin: '0 auto 2rem auto' }}>
-                                <PartnerMessage
-                                    coupleId={displayCouple.id}
-                                    currentUserId={session.user.id}
-                                    demoMode={showDemo}
-                                    demoData={mockData.messages}
-                                />
-                                <MediaCarousel
-                                    coupleId={displayCouple.id}
-                                    demoMode={showDemo}
-                                    demoData={mockData.media}
-                                />
-                            </div>
-
-                            {/* STATUS BANNER (If waiting) - text modified for demo */}
-                            {!displayCouple.partner_user_id && !showDemo && (
-                                <div className="card" style={{ maxWidth: '600px', margin: '0 auto 2rem auto', textAlign: 'center', background: '#fff9fa', border: '1px dashed #ffb6c1' }}>
-                                    <div className="card" style={{ maxWidth: '600px', margin: '0 auto 2rem auto', textAlign: 'center', background: '#fff9fa', border: '1px dashed #ffb6c1' }}>
-                                        <h3>Waiting for Partner... ⏳</h3>
-                                        <p>Your timeline is technically active, but it looks better with two!</p>
-                                        <p>Share your invite code: <strong>{displayCouple.invite_code}</strong></p>
-                                        <button onClick={() => setShowInviteModal(true)} className="primary">
-                                            Send Invite Email 💌
-                                        </button>
-                                    </div>
+        return (
+            <>
+                <div style={{ paddingBottom: '4rem' }}>
+                    {/* ... header ... */}
+                    <header className="glass-header">
+                        <div>
+                            <h1 style={{ fontWeight: 'bold' }}>
+                                <span className="brand-gradient-text">A Lifetime of Valentines</span>
+                                <span> 💖</span>
+                            </h1>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            {!displayCouple.partner_user_id && (
+                                <div className="desktop-only">
+                                    <button onClick={() => setShowInviteModal(true)} className="primary" style={{ whiteSpace: 'nowrap' }}>
+                                        Invite Partner 💌
+                                    </button>
                                 </div>
                             )}
+                            <button onClick={() => setShowShareModal(true)} className="secondary" style={{ whiteSpace: 'nowrap' }}>
+                                🔗 Share
+                            </button>
+                            <button onClick={handleSignOut} className="secondary" style={{ whiteSpace: 'nowrap' }}>Sign Out</button>
+                        </div>
+                    </header>
 
-                            {/* MAIN LAYOUT: STRICT VERTICAL STACK (Single Column) */}
-                            <div className="dashboard-grid">
-
-                                {/* Section 1: Timeline */}
-                                <div>
-                                    <PlansTimeline
-                                        coupleId={displayCouple.id}
-                                        demoMode={showDemo}
-                                        demoData={mockData.timeline}
-                                    />
-                                </div>
-
-                                {/* Section 2: Collapsible Memories */}
-                                <div className="card" style={{ padding: '1rem' }}>
-                                    <div
-                                        onClick={() => setIsMemoriesExpanded(!isMemoriesExpanded)}
-                                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
-                                    >
-                                        <h3 style={{ margin: 0 }}>📸 Memories & Uploads</h3>
-                                        <span style={{ fontSize: '1.2rem', transform: isMemoriesExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}>▼</span>
-                                    </div>
-
-                                    {isMemoriesExpanded && (
-                                        <div className="fade-in" style={{ marginTop: '1.5rem' }}>
-                                            <MediaUpload
-                                                coupleId={displayCouple.id}
-                                                onUploadComplete={() => fetchCoupleData(session.user.id)}
-                                                demoMode={showDemo}
-                                                onDemoAction={handleExitDemo}
-                                            />
-                                            <div style={{ marginTop: '2rem' }}>
-                                                <CollageView
-                                                    coupleId={displayCouple.id}
-                                                    demoMode={showDemo}
-                                                    demoData={mockData.media}
-                                                />
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                        </>
-                    ) : (
-                        <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
-                            {/* Empty State / Loading */}
-                            {/* If we are here, we are not loading, and we have no couple. */}
-                            {/* This should act as the "Start Journey" state if Demo is exited */}
-                            <h2>Ready to write your own story?</h2>
-                            <button className="primary" onClick={() => window.location.href = '/setup'}>
-                                Setup My Page
+                    {/* Mobile Invite Button (Stacked under header) */}
+                    {!displayCouple.partner_user_id && (
+                        <div className="container mobile-only" style={{ marginTop: '0.5rem', marginBottom: '-1rem', textAlign: 'center' }}>
+                            <button onClick={() => setShowInviteModal(true)} className="primary" style={{ width: '100%' }}>
+                                Invite Partner 💌
                             </button>
                         </div>
                     )}
-                </div>
-            </div>
 
-            {/* Share Modal */}
-            {
-                showShareModal && (
-                    <ShareModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} coupleId={couple?.id} />
-                )
-            }
+                    <div className="container" style={{ position: 'relative', zIndex: 1, marginTop: '2rem' }}>
 
-            {
-                showInviteModal && (
-                    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, backdropFilter: 'blur(3px)' }}>
-                        <div className="card" style={{ maxWidth: '500px', width: '90%', margin: '1rem' }}>
-                            {manualInviteData ? (
-                                <>
-                                    <h3 style={{ color: '#d6336c' }}>Invite Email Failed 😓</h3>
-                                    <p>But don't worry! You can send these details to your partner manually:</p>
+                        {displayCouple ? (
+                            <>
+                                {showDemo && (
+                                    <DemoBanner
+                                        onExit={handleExitDemo}
+                                    />
+                                )}
 
-                                    <div style={{ background: '#fff9fa', padding: '1rem', borderRadius: '8px', border: '1px dashed #ffb6c1', margin: '1rem 0', textAlign: 'left' }}>
-                                        <p style={{ margin: '0.5rem 0' }}><strong>Invite Code:</strong> <code style={{ fontSize: '1.2rem', color: '#d6336c' }}>{manualInviteData.code}</code></p>
-                                        <p style={{ margin: '0.5rem 0' }}><strong>Temp Password:</strong> <code style={{ fontSize: '1.2rem', color: '#d6336c' }}>{manualInviteData.password}</code></p>
-                                        <p style={{ margin: '0.5rem 0' }}><strong>Link:</strong> <span style={{ fontSize: '0.9rem' }}>{window.location.origin}/register-partner?code={manualInviteData.code}</span></p>
+                                {/* TOP SECTION: Message Board & Carousel */}
+                                <div style={{ maxWidth: '700px', margin: '0 auto 2rem auto' }}>
+                                    <PartnerMessage
+                                        coupleId={displayCouple.id}
+                                        currentUserId={session.user.id}
+                                        demoMode={showDemo}
+                                        demoData={mockData.messages}
+                                    />
+                                    <MediaCarousel
+                                        coupleId={displayCouple.id}
+                                        demoMode={showDemo}
+                                        demoData={mockData.media}
+                                    />
+                                </div>
+
+                                {/* STATUS BANNER (If waiting) - text modified for demo */}
+                                {!displayCouple.partner_user_id && !showDemo && (
+                                    <div className="card" style={{ maxWidth: '600px', margin: '0 auto 2rem auto', textAlign: 'center', background: '#fff9fa', border: '1px dashed #ffb6c1' }}>
+                                        <div className="card" style={{ maxWidth: '600px', margin: '0 auto 2rem auto', textAlign: 'center', background: '#fff9fa', border: '1px dashed #ffb6c1' }}>
+                                            <h3>Waiting for Partner... ⏳</h3>
+                                            <p>Your timeline is technically active, but it looks better with two!</p>
+                                            <p>Share your invite code: <strong>{displayCouple.invite_code}</strong></p>
+                                            <button onClick={() => setShowInviteModal(true)} className="primary">
+                                                Send Invite Email 💌
+                                            </button>
+                                        </div>
                                     </div>
+                                )}
 
-                                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
-                                        <button onClick={() => {
-                                            navigator.clipboard.writeText(`Hey! Join me on our Valentine's timeline.\n\nLink: ${window.location.origin}/register-partner?code=${manualInviteData.code}\nCode: ${manualInviteData.code}\nPassword: ${manualInviteData.password}`);
-                                            alert('Copied to clipboard!');
-                                        }} className="primary">
-                                            Copy All to Clipboard 📋
-                                        </button>
-                                        <button onClick={() => { setShowInviteModal(false); setManualInviteData(null); }} className="secondary">
-                                            Close
-                                        </button>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <h3>Send Valentine's Invite 💌</h3>
-                                    <p>Customize the message for your partner.</p>
+                                {/* MAIN LAYOUT: STRICT VERTICAL STACK (Single Column) */}
+                                <div className="dashboard-grid">
 
-                                    <div style={{ textAlign: 'left', marginBottom: '1rem' }}>
-                                        <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '0.3rem', color: '#555' }}>Partner's Email:</label>
-                                        <input
-                                            type="email"
-                                            value={partnerEmail || ''}
-                                            onChange={(e) => setPartnerEmail(e.target.value)}
-                                            placeholder="partner@example.com"
-                                            style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }}
+                                    {/* Section 1: Timeline */}
+                                    <div>
+                                        <PlansTimeline
+                                            coupleId={displayCouple.id}
+                                            demoMode={showDemo}
+                                            demoData={mockData.timeline}
                                         />
                                     </div>
 
-                                    <textarea
-                                        value={valentinePlans}
-                                        onChange={(e) => setValentinePlans(e.target.value)}
-                                        placeholder="Add a special message or your Valentine's Day plans..."
-                                        style={{ width: '100%', height: '100px', margin: '1rem 0' }}
-                                    />
+                                    {/* Section 2: Collapsible Memories */}
+                                    <div className="card" style={{ padding: '1rem' }}>
+                                        <div
+                                            onClick={() => setIsMemoriesExpanded(!isMemoriesExpanded)}
+                                            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
+                                        >
+                                            <h3 style={{ margin: 0 }}>📸 Memories & Uploads</h3>
+                                            <span style={{ fontSize: '1.2rem', transform: isMemoriesExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}>▼</span>
+                                        </div>
 
-                                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
-                                        <button onClick={() => setShowInviteModal(false)} className="secondary">Cancel</button>
-                                        <button onClick={handleSendInvite} className="primary" disabled={inviteSending}>
-                                            {inviteSending ? 'Sending...' : 'Send Email'}
-                                        </button>
+                                        {isMemoriesExpanded && (
+                                            <div className="fade-in" style={{ marginTop: '1.5rem' }}>
+                                                <MediaUpload
+                                                    coupleId={displayCouple.id}
+                                                    onUploadComplete={() => fetchCoupleData(session.user.id)}
+                                                    demoMode={showDemo}
+                                                    onDemoAction={handleExitDemo}
+                                                />
+                                                <div style={{ marginTop: '2rem' }}>
+                                                    <CollageView
+                                                        coupleId={displayCouple.id}
+                                                        demoMode={showDemo}
+                                                        demoData={mockData.media}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                </>
-                            )}
-                        </div>
+                                </div>
+
+                            </>
+                        ) : (
+                            <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
+                                {/* Empty State / Loading */}
+                                {/* If we are here, we are not loading, and we have no couple. */}
+                                {/* This should act as the "Start Journey" state if Demo is exited */}
+                                <h2>Ready to write your own story?</h2>
+                                <button className="primary" onClick={() => window.location.href = '/setup'}>
+                                    Setup My Page
+                                </button>
+                            </div>
+                        )}
                     </div>
-                )
-            }
-        </>
-    )
-}
+                </div>
 
-import LoadingHeart from './components/LoadingHeart'
-import logger from './utils/logger'
-import ForgotPassword from './pages/ForgotPassword'
-import UpdatePassword from './pages/UpdatePassword'
-
-function App() {
-    const [session, setSession] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-
-    useEffect(() => {
-        let mounted = true;
-        const LOADING_TIMEOUT_MS = 7000; // 7 seconds timeout
-
-        const initSession = async () => {
-            try {
-                logger.group('Auth Initialization');
-                logger.info('Starting session check...');
-
-                // Race between getSession and a timeout
-                const sessionPromise = supabase.auth.getSession();
-                const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('Session check timed out')), LOADING_TIMEOUT_MS)
-                );
-
-                const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]);
-
-                if (mounted) {
-                    logger.info('Session retrieved:', session ? 'User found' : 'No user');
-                    setSession(session);
-                    setLoading(false);
+                {/* Share Modal */}
+                {
+                    showShareModal && (
+                        <ShareModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} coupleId={couple?.id} />
+                    )
                 }
-            } catch (err) {
-                logger.error('Auth Init Error:', err);
-                if (mounted) {
-                    // If timeout or error, we stop loading.
-                    // If it was a timeout, session remains null, so it might redirect to login (which is safe).
-                    // Or we could set a specific error state to show a "Retry" button.
-                    if (err.message === 'Session check timed out') {
-                        logger.warn('Force stopping loading due to timeout.');
-                        setLoading(false);
-                        // Note: By setting loading false with null session, it will redirect to /login.
-                        // This prevents the infinite white screen.
-                    } else {
-                        setError(err);
-                        setLoading(false);
-                    }
+
+                {
+                    showInviteModal && (
+                        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, backdropFilter: 'blur(3px)' }}>
+                            <div className="card" style={{ maxWidth: '500px', width: '90%', margin: '1rem' }}>
+                                {manualInviteData ? (
+                                    <>
+                                        <h3 style={{ color: '#d6336c' }}>Invite Email Failed 😓</h3>
+                                        <p>But don't worry! You can send these details to your partner manually:</p>
+
+                                        <div style={{ background: '#fff9fa', padding: '1rem', borderRadius: '8px', border: '1px dashed #ffb6c1', margin: '1rem 0', textAlign: 'left' }}>
+                                            <p style={{ margin: '0.5rem 0' }}><strong>Invite Code:</strong> <code style={{ fontSize: '1.2rem', color: '#d6336c' }}>{manualInviteData.code}</code></p>
+                                            <p style={{ margin: '0.5rem 0' }}><strong>Temp Password:</strong> <code style={{ fontSize: '1.2rem', color: '#d6336c' }}>{manualInviteData.password}</code></p>
+                                            <p style={{ margin: '0.5rem 0' }}><strong>Link:</strong> <span style={{ fontSize: '0.9rem' }}>{window.location.origin}/register-partner?code={manualInviteData.code}</span></p>
+                                        </div>
+
+                                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                                            <button onClick={() => {
+                                                navigator.clipboard.writeText(`Hey! Join me on our Valentine's timeline.\n\nLink: ${window.location.origin}/register-partner?code=${manualInviteData.code}\nCode: ${manualInviteData.code}\nPassword: ${manualInviteData.password}`);
+                                                alert('Copied to clipboard!');
+                                            }} className="primary">
+                                                Copy All to Clipboard 📋
+                                            </button>
+                                            <button onClick={() => { setShowInviteModal(false); setManualInviteData(null); }} className="secondary">
+                                                Close
+                                            </button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <h3>Send Valentine's Invite 💌</h3>
+                                        <p>Customize the message for your partner.</p>
+
+                                        <div style={{ textAlign: 'left', marginBottom: '1rem' }}>
+                                            <label style={{ display: 'block', fontSize: '0.9rem', marginBottom: '0.3rem', color: '#555' }}>Partner's Email:</label>
+                                            <input
+                                                type="email"
+                                                value={partnerEmail || ''}
+                                                onChange={(e) => setPartnerEmail(e.target.value)}
+                                                placeholder="partner@example.com"
+                                                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd' }}
+                                            />
+                                        </div>
+
+                                        <textarea
+                                            value={valentinePlans}
+                                            onChange={(e) => setValentinePlans(e.target.value)}
+                                            placeholder="Add a special message or your Valentine's Day plans..."
+                                            style={{ width: '100%', height: '100px', margin: '1rem 0' }}
+                                        />
+
+                                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                                            <button onClick={() => setShowInviteModal(false)} className="secondary">Cancel</button>
+                                            <button onClick={handleSendInvite} className="primary" disabled={inviteSending}>
+                                                {inviteSending ? 'Sending...' : 'Send Email'}
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    )
                 }
-            } finally {
-                logger.groupEnd();
-            }
-        };
-
-        initSession();
-
-        const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            logger.info('Auth State Change:', _event);
-            if (mounted) {
-                setSession(session);
-                // Ensure loading is cleared if an event comes in (e.g. after a slow load)
-                setLoading(false);
-            }
-        })
-
-        return () => {
-            mounted = false;
-            subscription.unsubscribe();
-        }
-    }, [])
-
-    if (loading) {
-        return <LoadingHeart message="Loading" />;
-    }
-
-    if (error) {
-        return (
-            <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
-                <h3>Something went wrong 😓</h3>
-                <p>We couldn't load your session.</p>
-                <button className="primary" onClick={() => window.location.reload()}>Retry</button>
-            </div>
+            </>
         )
     }
 
-    return (
-        <Router>
-            <HeartBackground />
-            <Routes>
-                <Route path="/login" element={!session ? <Login /> : <Navigate to="/" />} />
-                <Route path="/signup" element={!session ? <SignUp /> : <Navigate to="/" />} />
-                <Route path="/register-partner" element={!session ? <PartnerRegister /> : <Navigate to="/" />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/update-password" element={<UpdatePassword />} />
-                <Route path="/share/:token" element={<SharedView />} />
-                <Route path="/" element={session ? <Dashboard session={session} /> : <Navigate to="/login" />} />
-            </Routes>
-        </Router>
-    )
-}
 
-export default App
+function App() {
+        const [session, setSession] = useState(null)
+        const [loading, setLoading] = useState(true)
+        const [error, setError] = useState(null)
+
+        useEffect(() => {
+            let mounted = true;
+            const LOADING_TIMEOUT_MS = 7000; // 7 seconds timeout
+
+            const initSession = async () => {
+                const MIN_LOAD_TIME_MS = 2000; // Force at least 2 seconds of heart animation
+                try {
+                    logger.group('Auth Initialization');
+                    logger.info('Starting session check...');
+
+                    // Race between getSession and a timeout
+                    const sessionPromise = supabase.auth.getSession();
+                    const timeoutPromise = new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error('Session check timed out')), LOADING_TIMEOUT_MS)
+                    );
+
+                    // Min delay promise
+                    const minDelayPromise = new Promise(resolve => setTimeout(resolve, MIN_LOAD_TIME_MS));
+
+                    // Wait for BOTH (session OR timeout) AND (minDelay)
+                    const [{ data: { session } }] = await Promise.all([
+                        Promise.race([sessionPromise, timeoutPromise]),
+                        minDelayPromise
+                    ]);
+
+                    if (mounted) {
+                        logger.info('Session retrieved:', session ? 'User found' : 'No user');
+                        setSession(session);
+                        setLoading(false);
+                    }
+                } catch (err) {
+                    logger.error('Auth Init Error:', err);
+                    if (mounted) {
+                        if (err.message === 'Session check timed out') {
+                            logger.warn('Force stopping loading due to timeout.');
+                            setLoading(false);
+                        } else {
+                            setError(err);
+                            setLoading(false);
+                        }
+                    }
+                } finally {
+                    logger.groupEnd();
+                }
+            };
+
+            initSession();
+
+            const {
+                data: { subscription },
+            } = supabase.auth.onAuthStateChange((_event, session) => {
+                logger.info('Auth State Change:', _event);
+                if (mounted) {
+                    setSession(session);
+                    setLoading(false);
+                }
+            })
+
+            return () => {
+                mounted = false;
+                subscription.unsubscribe();
+            }
+        }, [])
+
+        if (loading) {
+            return <LoadingHeart message="Loading" />;
+        }
+
+        if (error) {
+            return (
+                <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
+                    <h3>Something went wrong 😓</h3>
+                    <p>We couldn't load your session.</p>
+                    <button className="primary" onClick={() => window.location.reload()}>Retry</button>
+                </div>
+            )
+        }
+
+        return (
+            <Router>
+                <HeartBackground />
+                <Routes>
+                    <Route path="/login" element={!session ? <Login /> : <Navigate to="/" />} />
+                    <Route path="/signup" element={!session ? <SignUp /> : <Navigate to="/" />} />
+                    <Route path="/register-partner" element={!session ? <PartnerRegister /> : <Navigate to="/" />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/update-password" element={<UpdatePassword />} />
+                    <Route path="/share/:token" element={<SharedView />} />
+                    <Route path="/" element={session ? <Dashboard session={session} /> : <Navigate to="/login" />} />
+                </Routes>
+            </Router>
+        )
+    }
+
+    export default App
