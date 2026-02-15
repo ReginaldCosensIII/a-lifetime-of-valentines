@@ -1,11 +1,12 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 
 export default function PartnerRegister() {
-    const [inviteCode, setInviteCode] = useState('');
-    const [email, setEmail] = useState('');
+    const [searchParams] = useSearchParams();
+    const [inviteCode, setInviteCode] = useState(searchParams.get('code') || '');
+    const [email, setEmail] = useState(searchParams.get('email') || '');
     const [tempPassword, setTempPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);

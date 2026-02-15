@@ -386,12 +386,12 @@ function Dashboard({ session }) {
                                     <div style={{ background: '#fff9fa', padding: '1rem', borderRadius: '8px', border: '1px dashed #ffb6c1', margin: '1rem 0', textAlign: 'left' }}>
                                         <p style={{ margin: '0.5rem 0' }}><strong>Invite Code:</strong> <code style={{ fontSize: '1.2rem', color: '#d6336c' }}>{manualInviteData.code}</code></p>
                                         <p style={{ margin: '0.5rem 0' }}><strong>Temp Password:</strong> <code style={{ fontSize: '1.2rem', color: '#d6336c' }}>{manualInviteData.password}</code></p>
-                                        <p style={{ margin: '0.5rem 0' }}><strong>Link:</strong> <span style={{ fontSize: '0.9rem' }}>{window.location.origin}/register-partner</span></p>
+                                        <p style={{ margin: '0.5rem 0' }}><strong>Link:</strong> <span style={{ fontSize: '0.9rem' }}>{window.location.origin}/register-partner?code={manualInviteData.code}</span></p>
                                     </div>
 
                                     <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
                                         <button onClick={() => {
-                                            navigator.clipboard.writeText(`Hey! Join me on our Valentine's timeline.\n\nLink: ${window.location.origin}/register-partner\nCode: ${manualInviteData.code}\nPassword: ${manualInviteData.password}`);
+                                            navigator.clipboard.writeText(`Hey! Join me on our Valentine's timeline.\n\nLink: ${window.location.origin}/register-partner?code=${manualInviteData.code}\nCode: ${manualInviteData.code}\nPassword: ${manualInviteData.password}`);
                                             alert('Copied to clipboard!');
                                         }} className="primary">
                                             Copy All to Clipboard 📋
