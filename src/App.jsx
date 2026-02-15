@@ -340,8 +340,8 @@ function App() {
         try {
             console.log('[App] Fetching couple data for user:', userId);
 
-            // TIMEOUT WRAPPER: Fail DB queries if they take > 5s
-            const DB_TIMEOUT_MS = 5000;
+            // TIMEOUT WRAPPER: Fail DB queries if they take > 8s
+            const DB_TIMEOUT_MS = 8000;
             const dbTimeout = () => new Promise((_, reject) => setTimeout(() => reject(new Error('DB_QUERY_TIMEOUT')), DB_TIMEOUT_MS));
 
             // Check if owner
