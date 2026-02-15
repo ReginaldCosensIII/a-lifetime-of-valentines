@@ -115,7 +115,7 @@ Deno.serve(async (req) => {
               <p>Use these credentials to join and start building our memories together.</p>
               
               <div style="text-align: center; margin-top: 30px;">
-                <a href="${Deno.env.get('APP_URL') || 'https://a-lifetime-of-valentines.vercel.app'}/register-partner?code=${invite_code}&email=${encodeURIComponent(partner_email)}" class="btn">Accept Invite</a>
+                <a href="https://a-lifetime-of-valentines.vercel.app/register-partner?code=${invite_code}&email=${encodeURIComponent(partner_email)}" class="btn">Accept Invite</a>
               </div>
             </div>
             <div class="footer">
