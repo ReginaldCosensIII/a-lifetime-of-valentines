@@ -340,8 +340,8 @@ function App() {
         try {
             console.log('[App] Fetching couple data for user:', userId);
 
-            // TIMEOUT WRAPPER: Fail DB queries if they take > 12s
-            const DB_TIMEOUT_MS = 12000;
+            // TIMEOUT WRAPPER: Fail DB queries if they take > 7s
+            const DB_TIMEOUT_MS = 7000;
             const dbTimeout = () => new Promise((_, reject) => setTimeout(() => reject(new Error('DB_QUERY_TIMEOUT')), DB_TIMEOUT_MS));
 
             // Check if owner
@@ -437,7 +437,7 @@ function App() {
 
     useEffect(() => {
         let mounted = true;
-        const LOADING_TIMEOUT_MS = 12000; // Increased to 12s for cold starts
+        const LOADING_TIMEOUT_MS = 8000; // 8 seconds global timeout
 
         const initSession = async () => {
             const MIN_LOAD_TIME_MS = 2000; // Force at least 2 seconds
