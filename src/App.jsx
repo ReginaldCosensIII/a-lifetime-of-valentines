@@ -36,25 +36,28 @@ function Dashboard({ session }) {
         try {
             setLoading(true);
             // Check if owner
-            const { data: ownerData, error: ownerError } = await supabase
+            const { data: ownerData } = await supabase
                 .from('couples')
-                .select('*, media(count), entries(count)') // Select counts to check for activity
+                .select('*, media(count), entries(count)')
                 .eq('owner_user_id', userId)
                 .maybeSingle();
 
             if (ownerData) {
-                // Check if the couple has any data (media or entries)
+                // FOUND AS OWNER
+                console.log('User found as Owner.');
+
+                // Check if "Start Journey" has been clicked (status='active') OR if data exists
                 const hasData = (ownerData.media && ownerData.media[0] && ownerData.media[0].count > 0) ||
                     (ownerData.entries && ownerData.entries[0] && ownerData.entries[0].count > 0);
 
-                if (!hasData) {
-                    console.log('Couple has no data. Showing Demo Onboarding.');
+                const isJourneyStarted = ownerData.status === 'active';
+
+                if (!isJourneyStarted && !hasData) {
+                    console.log('Journey not started & no data. Showing Demo.');
                     setShowDemo(true);
-                    // Merge real couple identity with mock data for display
-                    // Priority: Real Data (ID, codes, passwords) > Mock Data (names, etc if missing)
                     setCouple({
                         ...mockData.couple,
-                        ...ownerData, // Spread ownerData SECOND to keep real ID, invite_code, passwords
+                        ...ownerData,
                         is_real_user: true
                     });
                 } else {
@@ -65,22 +68,27 @@ function Dashboard({ session }) {
             }
 
             // Check if partner
-            const { data: partnerData, error: partnerError } = await supabase
+            const { data: partnerData } = await supabase
                 .from('couples')
-                .select('*, media(count), entries(count)') // Also fetch counts for partner view
+                .select('*, media(count), entries(count)')
                 .eq('partner_user_id', userId)
                 .maybeSingle();
 
             if (partnerData) {
+                // FOUND AS PARTNER
+                console.log('User found as Partner.');
+
                 const hasData = (partnerData.media && partnerData.media[0] && partnerData.media[0].count > 0) ||
                     (partnerData.entries && partnerData.entries[0] && partnerData.entries[0].count > 0);
 
-                if (!hasData) {
-                    console.log('Couple (Partner View) has no data. Showing Demo Onboarding.');
+                const isJourneyStarted = partnerData.status === 'active';
+
+                if (!isJourneyStarted && !hasData) {
+                    console.log('Journey not started (Partner) & no data. Showing Demo.');
                     setShowDemo(true);
                     setCouple({
                         ...mockData.couple,
-                        ...partnerData, // Spread real data SECOND
+                        ...partnerData,
                         is_real_user: true
                     });
                 } else {
@@ -88,6 +96,7 @@ function Dashboard({ session }) {
                     setShowDemo(false);
                 }
             } else {
+                // NEW VISITOR
                 console.log('No couple data found. Enabling Visitor Demo Mode.');
                 setShowDemo(true);
                 setCouple(mockData.couple);
@@ -102,25 +111,47 @@ function Dashboard({ session }) {
 
     const handleExitDemo = async () => {
         setLoading(true);
-        setShowDemo(false);
-        // Re-fetch strictly the real data to show the "empty" dashboard state
-        // We know session.user.id exists if we are here
-        if (session?.user?.id) {
-            const { data: ownerData } = await supabase
-                .from('couples')
-                .select('*')
-                .eq('owner_user_id', session.user.id)
-                .maybeSingle();
-
-            if (ownerData) {
-                setCouple(ownerData);
-            } else {
-                // Should not happen for authenticated users who just signed up, 
-                // but if it does, keep them on empty state
-                setCouple(null);
+        try {
+            // Persist the "Start Journey" action
+            if (session?.user?.id && couple?.id && couple.is_real_user) {
+                await supabase
+                    .from('couples')
+                    .update({ status: 'active' })
+                    .eq('id', couple.id);
             }
+
+            setShowDemo(false);
+
+            if (session?.user?.id) {
+                // Check Owner first
+                const { data: ownerData } = await supabase
+                    .from('couples')
+                    .select('*')
+                    .eq('owner_user_id', session.user.id)
+                    .maybeSingle();
+
+                if (ownerData) {
+                    setCouple(ownerData);
+                } else {
+                    // Check Partner
+                    const { data: partnerData } = await supabase
+                        .from('couples')
+                        .select('*')
+                        .eq('partner_user_id', session.user.id)
+                        .maybeSingle();
+
+                    if (partnerData) {
+                        setCouple(partnerData);
+                    } else {
+                        setCouple(null);
+                    }
+                }
+            }
+        } catch (err) {
+            console.error('Error exiting demo:', err);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const [partnerEmail, setPartnerEmail] = useState('')
@@ -218,9 +249,11 @@ function Dashboard({ session }) {
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         {!displayCouple.partner_user_id && (
-                            <button onClick={() => setShowInviteModal(true)} className="primary" style={{ whiteSpace: 'nowrap' }}>
-                                Invite Partner 💌
-                            </button>
+                            <div className="desktop-only">
+                                <button onClick={() => setShowInviteModal(true)} className="primary" style={{ whiteSpace: 'nowrap' }}>
+                                    Invite Partner 💌
+                                </button>
+                            </div>
                         )}
                         <button onClick={() => setShowShareModal(true)} className="secondary" style={{ whiteSpace: 'nowrap' }}>
                             🔗 Share
@@ -228,6 +261,15 @@ function Dashboard({ session }) {
                         <button onClick={handleSignOut} className="secondary" style={{ whiteSpace: 'nowrap' }}>Sign Out</button>
                     </div>
                 </header>
+
+                {/* Mobile Invite Button (Stacked under header) */}
+                {!displayCouple.partner_user_id && (
+                    <div className="container mobile-only" style={{ marginTop: '0.5rem', marginBottom: '-1rem', textAlign: 'center' }}>
+                        <button onClick={() => setShowInviteModal(true)} className="primary" style={{ width: '100%' }}>
+                            Invite Partner 💌
+                        </button>
+                    </div>
+                )}
 
                 <div className="container" style={{ position: 'relative', zIndex: 1, marginTop: '2rem' }}>
 

@@ -78,26 +78,22 @@ export default function PartnerRegister() {
             }
 
             if (user) {
-                // 3. Link partner to couple
-                const { error: updateError } = await supabase
-                    .from('couples')
-                    .update({
-                        partner_email: email,
-                        partner_user_id: user.id,
-                        partner_temp_password: null // Clear temp password after use for security
-                    })
-                    .eq('id', coupleData.id);
+                // 3. Link partner to couple using Secure RPC (Bypassing RLS)
+                const { data: linkData, error: linkError } = await supabase.rpc('link_partner', {
+                    invite_code_input: inviteCode,
+                    email_input: email
+                });
 
-                if (updateError) {
-                    console.error('Error linking partner:', updateError);
-                    // Critical error: User created but not linked. 
-                    // In production, we'd need a robust retry or "claim" flow.
-                    setError('Account created but failed to link to couple. Please contact support.');
-                    setLoading(false);
-                } else {
-                    alert('Partner account created successfully! You are now linked.');
-                    navigate('/');
+                if (linkError) {
+                    throw new Error(linkError.message);
                 }
+
+                if (!linkData || !linkData.success) {
+                    throw new Error(linkData?.error || 'Failed to link account.');
+                }
+
+                alert('Partner account created successfully! You are now linked.');
+                navigate('/');
             }
 
         } catch (err) {

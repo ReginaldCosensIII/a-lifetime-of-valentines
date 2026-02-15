@@ -336,3 +336,22 @@ select:focus {
   transform: translateX(5px);
   border-left-width: 8px !important;
 }
+
+/* Responsive Utilities */
+.mobile-only {
+  display: block;
+}
+
+.desktop-only {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none;
+  }
+
+  .desktop-only {
+    display: block;
+  }
+}
