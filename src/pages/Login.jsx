@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -6,8 +6,23 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const navigate = useNavigate();
+    const [isSystemLocked, setIsSystemLocked] = useState(false);
+    const [showLockModal, setShowLockModal] = useState(false);
+
+    useEffect(() => {
+        checkSystemStatus();
+    }, []);
+
+    const checkSystemStatus = async () => {
+        try {
+            const { data } = await supabase.rpc('get_system_status');
+            if (data && data.is_locked) {
+                setIsSystemLocked(true);
+            }
+        } catch (err) {
+            console.error('System check failed:', err);
+        }
+    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -24,6 +39,15 @@ export default function Login() {
             setLoading(false);
         } else {
             navigate('/');
+        }
+    };
+
+    const handleLockedNavigation = (e, path) => {
+        e.preventDefault();
+        if (isSystemLocked) {
+            setShowLockModal(true);
+        } else {
+            navigate(path);
         }
     };
 
@@ -91,11 +115,58 @@ export default function Login() {
                     </form>
 
                     <div style={{ marginTop: '2rem', textAlign: 'center', borderTop: '1px solid #eee', paddingTop: '1.5rem' }}>
-                        <p style={{ marginBottom: '0.5rem' }}>Don't have an account? <Link to="/signup" style={{ color: '#d6336c', fontWeight: '600' }}>Sign Up</Link></p>
-                        <p style={{ fontSize: '0.9rem', color: '#666' }}>Got an invite? <Link to="/register-partner" style={{ color: '#d6336c' }}>Join Partner</Link></p>
+                        <p style={{ marginBottom: '0.5rem' }}>
+                            Don't have an account?{' '}
+                            <a href="/signup" onClick={(e) => handleLockedNavigation(e, '/signup')} style={{ color: '#d6336c', fontWeight: '600', textDecoration: 'none', cursor: 'pointer' }}>
+                                Sign Up
+                            </a>
+                        </p>
+                        <p style={{ fontSize: '0.9rem', color: '#666' }}>
+                            Got an invite?{' '}
+                            <a href="/register-partner" onClick={(e) => handleLockedNavigation(e, '/register-partner')} style={{ color: '#d6336c', textDecoration: 'none', cursor: 'pointer' }}>
+                                Join Partner
+                            </a>
+                        </p>
                     </div>
                 </div>
             </div>
+
+            {/* System Locked Modal */}
+            {showLockModal && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+                    display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
+                }} onClick={() => setShowLockModal(false)}>
+                    <div className="card" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px', width: '90%', textAlign: 'center', animation: 'fadeIn 0.3s ease' }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🔒</div>
+                        <h3 style={{ color: '#d6336c', marginTop: 0 }}>System Locked</h3>
+                        <p style={{ color: '#555', lineHeight: '1.6' }}>
+                            This instance has already been setup by its couple. <br />
+                            However, you can deploy your own private version!
+                        </p>
+
+                        <div style={{ background: '#fff9fa', padding: '1rem', borderRadius: '8px', border: '1px dashed #ffb6c1', margin: '1.5rem 0' }}>
+                            <a
+                                href="https://github.com/ReginaldCosensIII/a-lifetime-of-valentines"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="primary"
+                                style={{ display: 'block', textDecoration: 'none', textAlign: 'center' }}
+                            >
+                                Fork on GitHub ↗
+                            </a>
+                            <p style={{ fontSize: '0.8rem', color: '#888', marginTop: '0.5rem', marginBottom: 0 }}>
+                                Free, private, and easy to setup.
+                            </p>
+                        </div>
+
+                        <button onClick={() => setShowLockModal(false)} className="secondary" style={{ width: '100%' }}>
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
