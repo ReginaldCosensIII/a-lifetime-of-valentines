@@ -442,6 +442,8 @@ function Dashboard({ session }) {
 
 import LoadingHeart from './components/LoadingHeart'
 import logger from './utils/logger'
+import ForgotPassword from './pages/ForgotPassword'
+import UpdatePassword from './pages/UpdatePassword'
 
 function App() {
     const [session, setSession] = useState(null)
