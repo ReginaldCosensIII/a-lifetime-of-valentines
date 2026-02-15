@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from './lib/supabase'
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import Login from './pages/Login'
@@ -105,8 +105,23 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData }) {
     }
 
 
-    // Otherwise fall back to pure mock data (for visitors).
-    const displayCouple = couple || mockData.couple;
+    // For logged-in users, if couple is null, it means they have no data yet OR data fetch failed/timed out.
+    // Do NOT fall back to mockData.
+    const displayCouple = couple;
+
+    // CRITICAL FIX: If loading finished but we have no data, show an empty state or error
+    // instead of crashing on displayCouple.partner_user_id
+    if (!displayCouple) {
+        return (
+            <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
+                <h3>Starting your journey... 💖</h3>
+                <p>We are setting up your personalized dashboard.</p>
+                <button className="primary" onClick={() => window.location.reload()}>
+                    Click to Retry
+                </button>
+            </div>
+        )
+    }
 
     return (
         <>
@@ -323,12 +338,26 @@ function App() {
     // Data Fetching Logic (Hoisted from Dashboard)
     const fetchCoupleData = async (userId) => {
         try {
+            console.log('[App] Fetching couple data for user:', userId);
+
+            // TIMEOUT WRAPPER: Fail DB queries if they take > 7s
+            const DB_TIMEOUT_MS = 7000;
+            const dbTimeout = () => new Promise((_, reject) => setTimeout(() => reject(new Error('DB_QUERY_TIMEOUT')), DB_TIMEOUT_MS));
+
             // Check if owner
-            const { data: ownerData } = await supabase
+            const ownerQuery = supabase
                 .from('couples')
                 .select('*, media(count), entries(count)')
                 .eq('owner_user_id', userId)
                 .maybeSingle();
+
+            const { data: ownerData, error: ownerError } = await Promise.race([
+                ownerQuery,
+                dbTimeout()
+            ]);
+
+            if (ownerError) console.error('[App] Owner Fetch Error:', ownerError);
+            if (ownerData) console.log('[App] Found as Owner:', ownerData.id);
 
             if (ownerData) {
                 // FOUND AS OWNER
@@ -337,49 +366,49 @@ function App() {
 
                 const isJourneyStarted = ownerData.status === 'active';
 
-                if (!isJourneyStarted && !hasData) {
-                    // console.log('Journey not started & no data. Showing Demo.');
-                    // FIX: Do NOT force demo for logged in users.
-                    // They should see the empty state to encourage them to start.
-                    setShowDemo(false);
-                    setCouple(ownerData);
-                } else {
-                    setCouple(ownerData);
-                    setShowDemo(false);
-                }
+                // Always use real data for logged in users
+                setCouple(ownerData);
+                setShowDemo(false);
                 return;
             }
 
             // Check if partner
-            const { data: partnerData } = await supabase
+            const partnerQuery = supabase
                 .from('couples')
                 .select('*, media(count), entries(count)')
                 .eq('partner_user_id', userId)
                 .maybeSingle();
 
+            const { data: partnerData, error: partnerError } = await Promise.race([
+                partnerQuery,
+                dbTimeout()
+            ]);
+
+            if (partnerError) console.error('[App] Partner Fetch Error:', partnerError);
+            if (partnerData) console.log('[App] Found as Partner:', partnerData.id);
+
             if (partnerData) {
                 // FOUND AS PARTNER
-                const hasData = (partnerData.media && partnerData.media[0] && partnerData.media[0].count > 0) ||
-                    (partnerData.entries && partnerData.entries[0] && partnerData.entries[0].count > 0);
-
-                const isJourneyStarted = partnerData.status === 'active';
-
-                if (!isJourneyStarted && !hasData) {
-                    // FIX: Do NOT force demo for logged in users.
-                    setShowDemo(false);
-                    setCouple(partnerData);
-                } else {
-                    setCouple(partnerData);
-                    setShowDemo(false);
-                }
+                setCouple(partnerData);
+                setShowDemo(false);
             } else {
-                // NEW VISITOR
-                setShowDemo(true);
-                setCouple(mockData.couple);
+                // NEW VISITOR (But logged in? This means they have a User auth but no Couple record)
+                console.warn('[App] Logged in but no couple record found.');
+
+                // CRITICAL FIX: Do NOT show demo mode for authenticated users.
+                // Leave couple as null (or empty object) so the Dashboard can show the "Setup" state.
+                setShowDemo(false);
+                setCouple(null);
             }
 
         } catch (error) {
             console.error('Error in fetchCoupleData:', error);
+            // If it was a timeout, ensure we don't leave the app hanging.
+            // setCouple(null) will let the "Retry" screen show.
+            if (error.message === 'DB_QUERY_TIMEOUT') {
+                console.error('[App] Database query timed out. Showing Retry screen.');
+                setCouple(null);
+            }
         }
     };
 
@@ -404,9 +433,11 @@ function App() {
         }
     };
 
+    const authListenerHandling = useRef(false);
+
     useEffect(() => {
         let mounted = true;
-        const LOADING_TIMEOUT_MS = 7000; // 7 seconds timeout
+        const LOADING_TIMEOUT_MS = 8000; // 8 seconds global timeout
 
         const initSession = async () => {
             const MIN_LOAD_TIME_MS = 2000; // Force at least 2 seconds
@@ -431,6 +462,13 @@ function App() {
                 const { data: { session: foundSession } } = raceResult;
 
                 if (mounted) {
+                    // If authListener already grabbed the session, we don't need to do anything here
+                    // to avoid double-fetching or race conditions.
+                    if (authListenerHandling.current) {
+                        logger.info('Auth listener took over. InitSession yielding.');
+                        return;
+                    }
+
                     logger.info('Session retrieved:', foundSession ? 'User found' : 'No user');
                     setSession(foundSession);
 
@@ -447,6 +485,13 @@ function App() {
                 logger.error('Auth Init Error:', err);
                 if (mounted) {
                     if (err.message === 'Session check timed out') {
+                        // CRITICAL FIX: If auth listener is working, DO NOT force stop.
+                        // Let the auth listener finish its fetch.
+                        if (authListenerHandling.current) {
+                            logger.warn('Timeout hit, but Auth Listener is active. Yielding to allow fetch to complete.');
+                            return;
+                        }
+
                         logger.warn('Force stopping loading due to timeout.');
                         setLoading(false);
                     } else {
@@ -463,13 +508,18 @@ function App() {
 
         const {
             data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            logger.info('Auth State Change:', _event);
+        } = supabase.auth.onAuthStateChange(async (_event, session) => {
             if (mounted) {
+                // Mark that we are handling this event
+                authListenerHandling.current = true;
+
+                logger.info('Auth State Change:', _event);
                 setSession(session);
-                // If this is a login event, we might want to fetch data too
+
+                // If this is a login event, we MUST fetch data BEFORE stopping loading
                 if (session?.user?.id) {
-                    fetchCoupleData(session.user.id);
+                    logger.info('Auth Change: Fetching couple data...');
+                    await fetchCoupleData(session.user.id);
                 }
                 setLoading(false);
             }
