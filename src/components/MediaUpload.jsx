@@ -65,7 +65,7 @@ export default function MediaUpload({ coupleId, onUploadComplete, demoMode, onDe
     };
 
     return (
-        <div style={{ marginTop: '2rem', padding: '1rem', border: '1px dashed #ccc', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.8)' }}>
+        <div className="media-upload-container">
             <h3>Add a Memory 📸</h3>
             <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem' }}>
                 <input
@@ -85,7 +85,8 @@ export default function MediaUpload({ coupleId, onUploadComplete, demoMode, onDe
             </div>
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                 {/* Option 1: Standard File Picker (Gallery) */}
-                <label className="primary" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', background: '#ff69b4', color: 'white', borderRadius: '4px', border: 'none' }}>
+                {/* Option 1: Standard File Picker (Gallery) */}
+                <label className="upload-button upload-btn-gallery">
                     <span>📁</span> {uploading ? 'Uploading...' : 'Gallery'}
                     <input
                         type="file"
@@ -97,7 +98,7 @@ export default function MediaUpload({ coupleId, onUploadComplete, demoMode, onDe
                 </label>
 
                 {/* Option 2: Take Photo (Environment/Rear Camera) */}
-                <label className="primary" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', background: '#d6336c', color: 'white', borderRadius: '4px', border: 'none' }}>
+                <label className="upload-button upload-btn-camera">
                     <span>📷</span> {uploading ? 'Uploading...' : 'Take Photo'}
                     <input
                         type="file"
@@ -110,7 +111,7 @@ export default function MediaUpload({ coupleId, onUploadComplete, demoMode, onDe
                 </label>
 
                 {/* Option 3: Record Video (Environment/Rear Camera) */}
-                <label className="primary" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', background: '#8e44ad', color: 'white', borderRadius: '4px', border: 'none' }}>
+                <label className="upload-button upload-btn-video">
                     <span>🎥</span> {uploading ? 'Uploading...' : 'Record Video'}
                     <input
                         type="file"

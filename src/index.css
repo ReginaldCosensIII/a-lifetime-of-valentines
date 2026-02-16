@@ -102,14 +102,14 @@ button {
 }
 
 .secondary {
-  background: white;
+  background: var(--card-bg);
   color: var(--primary-color);
-  border: 1px solid #ffb6c1;
+  border: 1px solid var(--secondary-color);
   padding: 0.5rem 1rem;
 }
 
 .secondary:hover {
-  background: #fff0f5;
+  background: var(--item-bg-hover);
 }
 
 /* FLOATING GLASS HEADER */
