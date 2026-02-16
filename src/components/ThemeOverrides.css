@@ -165,3 +165,76 @@
     background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 100%);
     color: #e1bee7;
 }
+
+/* PartnerMessage.jsx Overrides */
+.partner-message-card {
+    background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%);
+    /* Light mode default */
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    position: relative;
+    color: var(--text-color);
+}
+
+.partner-message-card.my-message {
+    background: var(--card-bg);
+    /* Use card background for own message */
+    border: 1px dashed var(--border-color);
+    box-shadow: none;
+}
+
+[data-theme="dark"] .partner-message-card {
+    background: linear-gradient(135deg, #5c2d3b 0%, #4a252f 100%);
+    /* Dark mode gradient */
+    color: var(--text-color);
+}
+
+.partner-message-text {
+    font-size: 1.5rem;
+    font-family: "Caveat", cursive, serif;
+    font-style: italic;
+    margin: 0 0 0.5rem 0;
+    color: var(--primary-color);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.partner-message-meta {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.partner-message-empty {
+    padding: 1rem;
+    border: 2px dashed var(--secondary-color);
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--primary-color);
+    background: var(--glass-bg);
+}
+
+.partner-message-edit {
+    margin-top: 1rem;
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+}
+
+/* SignUp.jsx - System Locked Box */
+.system-locked-box {
+    text-align: center;
+    padding: 1rem;
+}
+
+.github-fork-box {
+    background: var(--item-bg);
+    /* Was #fff9fa */
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px dashed var(--secondary-color);
+    /* Was #ffb6c1 */
+    margin-bottom: 1.5rem;
+}

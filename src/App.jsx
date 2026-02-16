@@ -389,14 +389,14 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData, han
                                     value={theme}
                                     onChange={(e) => setTheme(e.target.value)}
                                     style={{
-                                        padding: '4px 2px',
+                                        padding: '0.5rem',
                                         borderRadius: '6px',
                                         border: '1px solid var(--border-color)',
                                         background: 'var(--card-bg)',
                                         color: 'var(--text-color)',
-                                        fontSize: '0.8rem', // Smaller font for mobile
+                                        fontSize: '0.9rem',
                                         width: '100%',
-                                        minWidth: '100px'
+                                        minWidth: '120px'
                                     }}
                                 >
                                     <option value="light">☀️ Light</option>

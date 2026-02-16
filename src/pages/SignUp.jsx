@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { generateInviteCode } from '../lib/utils';
 import { useNavigate, Link } from 'react-router-dom';
+import '../components/ThemeOverrides.css';
 
 export default function SignUp() {
     const [email, setEmail] = useState('');
@@ -99,14 +100,14 @@ export default function SignUp() {
             <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
                 <div className="card" style={{ width: '100%', maxWidth: '400px', borderTop: '4px solid #ff69b4' }}>
                     {isSystemLocked ? (
-                        <div style={{ textAlign: 'center', padding: '1rem' }}>
+                        <div className="system-locked-box">
                             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔒</div>
                             <h3 style={{ color: '#d6336c', marginBottom: '0.5rem' }}>System Locked</h3>
-                            <p style={{ color: '#666', marginBottom: '1rem', lineHeight: '1.5' }}>
+                            <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', lineHeight: '1.5' }}>
                                 This instance of <strong>A Lifetime of Valentines</strong> has already been claimed by its couple.
                             </p>
-                            <div style={{ background: '#fff9fa', padding: '1rem', borderRadius: '8px', border: '1px dashed #ffb6c1', marginBottom: '1.5rem' }}>
-                                <p style={{ fontSize: '0.9rem', color: '#555', marginBottom: '0.5rem' }}>
+                            <div className="github-fork-box">
+                                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
                                     Want to create your own?
                                 </p>
                                 <a
