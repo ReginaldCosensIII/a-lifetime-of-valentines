@@ -117,7 +117,7 @@ export default function PartnerRegister() {
                     <span className="brand-gradient-text">A Lifetime of Valentines</span>
                     <span> 💖</span>
                 </h1>
-                <p style={{ color: '#888', marginTop: '0.5rem' }}>Join your partner's world</p>
+                <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>Join your partner's world</p>
             </div>
 
             <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
@@ -163,7 +163,7 @@ export default function PartnerRegister() {
 
                             <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#555' }}>Invite Code</label>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: 'var(--primary-color)' }}>Invite Code</label>
                                     <input
                                         type="text"
                                         value={inviteCode}
@@ -175,7 +175,7 @@ export default function PartnerRegister() {
                                 </div>
 
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#555' }}>Your Email</label>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: 'var(--primary-color)' }}>Your Email</label>
                                     <input
                                         type="email"
                                         value={email}
@@ -187,7 +187,7 @@ export default function PartnerRegister() {
                                 </div>
 
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#555' }}>Temporary Password</label>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: 'var(--primary-color)' }}>Temporary Password</label>
                                     <input
                                         type="text"
                                         value={tempPassword}
@@ -199,7 +199,7 @@ export default function PartnerRegister() {
                                 </div>
 
                                 <div style={{ borderTop: '1px dashed #ddd', paddingTop: '1rem', marginTop: '0.5rem' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#d6336c' }}>Set New Password</label>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: 'var(--primary-color)' }}>Set New Password</label>
                                     <div className="password-wrapper">
                                         <input
                                             type={showPassword ? "text" : "password"}
@@ -227,7 +227,7 @@ export default function PartnerRegister() {
 
                             <div style={{ marginTop: '2rem', textAlign: 'center', borderTop: '1px solid #eee', paddingTop: '1.5rem' }}>
                                 <p style={{ marginBottom: '0.5rem' }}>Starting a new couple? <Link to="/signup" style={{ color: '#d6336c', fontWeight: '600' }}>Sign Up Here</Link></p>
-                                <p style={{ fontSize: '0.9rem', color: '#666' }}>Already have an account? <Link to="/login" style={{ color: '#d6336c' }}>Login</Link></p>
+                                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Already have an account? <Link to="/login" style={{ color: '#d6336c' }}>Login</Link></p>
                             </div>
                         </>
                     )}

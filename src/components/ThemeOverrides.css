@@ -1,0 +1,247 @@
+/* Theme Overrides for Components with Hardcoded Styles */
+
+/* App.jsx - Waiting for Partner Card */
+.waiting-card {
+    background: var(--card-bg);
+    /* Was #fff9fa */
+    border: 1px dashed var(--secondary-color);
+    /* Was #ffb6c1 */
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+    text-align: center;
+    padding: 2rem;
+    /* Add padding here since we remove inline */
+    border-radius: 16px;
+    /* Standard card radius */
+    color: var(--text-color);
+}
+
+/* App.jsx - Invite Failed Box */
+.invite-failed-box {
+    background: var(--item-bg);
+    /* Was #fff9fa */
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px dashed var(--secondary-color);
+    margin: 1rem 0;
+    text-align: left;
+    color: var(--text-color);
+}
+
+.invite-failed-box code {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+/* PlansTimeline.jsx - Form */
+.plan-form {
+    background: var(--glass-bg);
+    /* Was rgba(255, 255, 255, 0.8) */
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+    /* Add border for definition */
+    color: var(--text-color);
+}
+
+/* PlansTimeline.jsx - Plan Card */
+.plan-card {
+    background: var(--card-bg);
+    /* Was white */
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--primary-color);
+    /* Was #ff69b4 */
+    box-shadow: var(--shadow-sm);
+    /* Was 0 2px 4px ... */
+    color: var(--text-color);
+}
+
+.plan-card h4 {
+    margin: 0;
+    color: var(--primary-color);
+    /* Was #d6336c */
+}
+
+.plan-card small {
+    color: var(--text-muted);
+    /* Was #888 */
+}
+
+.plan-card-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    /* Icon color */
+    opacity: 0.8;
+    padding: 0 0.25rem;
+}
+
+.plan-card-actions button:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* MediaCarousel.jsx - Empty State */
+.empty-carousel-state {
+    text-align: center;
+    padding: 2rem;
+    background: var(--glass-bg);
+    /* Was rgba(255,255,255,0.5) */
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+/* PartnerMessage.jsx overrides (Anticipated) */
+.message-card {
+    background: var(--card-bg);
+    color: var(--text-color);
+}
+
+/* MediaUpload.jsx Overrides */
+.media-upload-container {
+    margin-top: 2rem;
+    padding: 1rem;
+    border: 1px dashed var(--border-color);
+    /* Was #ccc */
+    border-radius: 8px;
+    background: var(--glass-bg);
+    /* Was rgba(255, 255, 255, 0.8) */
+    color: var(--text-color);
+}
+
+.upload-button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    color: white;
+    border-radius: 4px;
+    border: none;
+    font-weight: 500;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.upload-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.upload-btn-gallery {
+    background: linear-gradient(135deg, #ff69b4 0%, #ff8da1 100%);
+    /* Was #ff69b4 */
+}
+
+.upload-btn-camera {
+    background: linear-gradient(135deg, #d6336c 0%, #e64980 100%);
+    /* Was #d6336c */
+}
+
+.upload-btn-video {
+    background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+    /* Was #8e44ad */
+}
+
+/* Dark Mode Adjustments for Upload Buttons if needed */
+[data-theme="dark"] .upload-btn-gallery {
+    background: linear-gradient(135deg, #c2185b 0%, #d81b60 100%);
+    color: #ffdce0;
+    /* Increase contrast */
+}
+
+[data-theme="dark"] .upload-btn-camera {
+    background: linear-gradient(135deg, #880e4f 0%, #ad1457 100%);
+    color: #ffdce0;
+}
+
+[data-theme="dark"] .upload-btn-video {
+    background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 100%);
+    color: #e1bee7;
+}
+
+/* PartnerMessage.jsx Overrides */
+.partner-message-card {
+    background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%);
+    /* Light mode default */
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    position: relative;
+    color: var(--text-color);
+}
+
+.partner-message-card.my-message {
+    background: var(--card-bg);
+    /* Use card background for own message */
+    border: 1px dashed var(--border-color);
+    box-shadow: none;
+}
+
+[data-theme="dark"] .partner-message-card {
+    background: linear-gradient(135deg, #5c2d3b 0%, #4a252f 100%);
+    /* Dark mode gradient */
+    color: var(--text-color);
+}
+
+.partner-message-text {
+    font-size: 1.5rem;
+    font-family: "Caveat", cursive, serif;
+    font-style: italic;
+    margin: 0 0 0.5rem 0;
+    color: var(--primary-color);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.partner-message-meta {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.partner-message-empty {
+    padding: 1rem;
+    border: 2px dashed var(--secondary-color);
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--primary-color);
+    background: var(--glass-bg);
+}
+
+.partner-message-edit {
+    margin-top: 1rem;
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+}
+
+/* SignUp.jsx - System Locked Box */
+.system-locked-box {
+    text-align: center;
+    padding: 1rem;
+}
+
+.github-fork-box {
+    background: var(--item-bg);
+    /* Was #fff9fa */
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px dashed var(--secondary-color);
+    /* Was #ffb6c1 */
+    margin-bottom: 1.5rem;
+}
+
+/* DemoBanner.jsx - Dark Mode Override */
+[data-theme="dark"] .demo-banner {
+    background: rgba(45, 27, 34, 0.95);
+    border-color: var(--primary-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}

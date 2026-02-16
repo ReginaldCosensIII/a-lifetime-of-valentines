@@ -230,3 +230,31 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- 7. UTILITY FUNCTIONS
+
+-- Secure function to clear all data for a specific couple
+-- Only callable by the owner or partner of that couple
+create or replace function public.clear_couple_data(target_couple_id uuid)
+returns void
+language plpgsql
+security definer
+as $$
+begin
+  -- 1. Security Check: verify the executing user belongs to this couple
+  if not exists (
+    select 1 from public.couples c
+    where c.id = target_couple_id
+    and (c.owner_user_id = auth.uid() or c.partner_user_id = auth.uid())
+  ) then
+    raise exception 'Access Denied: You are not a member of this couple.';
+  end if;
+
+  -- 2. Delete all entries (timeline items)
+  delete from public.entries where couple_id = target_couple_id;
+
+  -- 3. Delete all media metadata
+  delete from public.media where couple_id = target_couple_id;
+end;
+$$;
+grant execute on function public.clear_couple_data(uuid) to authenticated;

@@ -1,6 +1,8 @@
 
 import { useState, useEffect } from 'react';
+
 import { supabase } from '../lib/supabase';
+import './ThemeOverrides.css';
 
 export default function PartnerMessage({ coupleId, currentUserId, demoMode, demoData }) {
     const [message, setMessage] = useState('');
@@ -87,28 +89,15 @@ export default function PartnerMessage({ coupleId, currentUserId, demoMode, demo
     return (
         <div style={{ marginBottom: '2rem' }}>
             {/* Display Area */}
+            {/* Display Area */}
             {hasMessage ? (
-                <div style={{
-                    background: isMyMessage ? 'rgba(255,255,255,0.9)' : 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
-                    padding: '1.5rem',
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-                    textAlign: 'center',
-                    border: isMyMessage ? '1px dashed #ccc' : 'none',
-                    position: 'relative',
+                <div className={`partner-message-card ${isMyMessage ? 'my-message' : ''}`} style={{
                     animation: !isMyMessage ? 'pulse-border 2s infinite' : 'none'
                 }}>
-                    <p style={{
-                        fontSize: '1.5rem',
-                        fontFamily: '"Caveat", cursive, serif', // Assuming we might add a font later, fallback to serif
-                        fontStyle: 'italic',
-                        margin: '0 0 0.5rem 0',
-                        color: isMyMessage ? '#666' : '#fff',
-                        textShadow: !isMyMessage ? '0 1px 2px rgba(0,0,0,0.1)' : 'none'
-                    }}>
+                    <p className="partner-message-text" style={{ color: isMyMessage ? 'var(--text-muted)' : 'var(--primary-color)' }}>
                         "{message}"
                     </p>
-                    <small style={{ color: isMyMessage ? '#999' : 'rgba(255,255,255,0.8)', fontSize: '0.8rem' }}>
+                    <small className="partner-message-meta">
                         {isMyMessage ? 'You wrote this' : 'From your Valentine'} • {new Date(lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </small>
 
@@ -129,10 +118,7 @@ export default function PartnerMessage({ coupleId, currentUserId, demoMode, demo
                 // Empty State Prompt
                 <div
                     onClick={() => setIsEditing(true)}
-                    style={{
-                        padding: '1rem', border: '2px dashed #ffb6c1', borderRadius: '12px',
-                        textAlign: 'center', cursor: 'pointer', color: '#d6336c', background: 'rgba(255,255,255,0.5)'
-                    }}
+                    className="partner-message-empty"
                 >
                     <p style={{ margin: 0 }}>💌 Leave a sweet note for your partner...</p>
                 </div>
@@ -140,12 +126,12 @@ export default function PartnerMessage({ coupleId, currentUserId, demoMode, demo
 
             {/* Editing Mode */}
             {isEditing && (
-                <div style={{ marginTop: '1rem', background: 'white', padding: '1rem', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                <div className="partner-message-edit">
                     <textarea
                         value={newMessage}
                         onChange={e => setNewMessage(e.target.value)}
                         placeholder="Write something sweet..."
-                        style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #ddd', minHeight: '80px', fontFamily: 'inherit' }}
+                        style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--border-color)', minHeight: '80px', fontFamily: 'inherit', background: 'var(--input-bg)', color: 'var(--text-color)' }}
                         autoFocus
                         disabled={demoMode}
                     />

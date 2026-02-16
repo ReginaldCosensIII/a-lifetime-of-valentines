@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import './ThemeOverrides.css';
 
 export default function MediaCarousel({ coupleId, demoMode, demoData }) {
     const [media, setMedia] = useState([]);
@@ -77,16 +78,27 @@ export default function MediaCarousel({ coupleId, demoMode, demoData }) {
 
     if (loading) return null;
     if (media.length === 0) return (
-        <div style={{ textAlign: 'center', padding: '2rem', background: 'rgba(255,255,255,0.5)', borderRadius: '8px', marginBottom: '1rem' }}>
+        <div className="empty-carousel-state">
             <p style={{ margin: 0 }}>Start capturing memories to see them here! 📸</p>
         </div>
     );
 
     const currentItem = media[currentIndex];
 
-    const url = demoMode
-        ? currentItem.url
-        : supabase.storage.from('memories').getPublicUrl(currentItem.storage_path).data.publicUrl;
+    // Guard clause: If currentItem is missing or malformed, don't crash
+    if (!currentItem) return null;
+
+    let url = currentItem.url;
+    if (!demoMode && currentItem.storage_path) {
+        try {
+            const { data } = supabase.storage.from('memories').getPublicUrl(currentItem.storage_path);
+            if (data) url = data.publicUrl;
+        } catch (err) {
+            console.warn('Error getting public URL:', err);
+        }
+    }
+
+    if (!url) return null; // Skip if no URL found
 
     return (
         <div

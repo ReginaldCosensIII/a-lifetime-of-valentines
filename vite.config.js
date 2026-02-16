@@ -11,7 +11,7 @@ export default defineConfig({
             includeAssets: ['pwa-icons/ltv-wpa-icon-180x180.png'],
             manifest: {
                 name: 'A Lifetime of Valentines 💖',
-                short_name: 'Lifetime 💖', // Kept shorter for home screen (12 chars max ideal), main name used for install
+                short_name: 'A Lifetime of Valentines 💖',
                 description: 'A shared timeline of love and memories.',
                 theme_color: '#fff9fa',
                 background_color: '#fff9fa',

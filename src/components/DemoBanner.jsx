@@ -4,8 +4,8 @@ export default function DemoBanner({ onExit }) {
     return (
         <div className="demo-banner">
             <div style={{ flex: 1 }}>
-                <strong style={{ display: 'block', color: '#d6336c', fontSize: '1rem' }}>Viewing Demo Mode</strong>
-                <span style={{ fontSize: '0.85rem', color: '#666' }}>This is sample data. Ready to start?</span>
+                <strong style={{ display: 'block', color: 'var(--primary-color)', fontSize: '1rem' }}>Viewing Demo Mode</strong>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>This is sample data. Ready to start?</span>
             </div>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <button

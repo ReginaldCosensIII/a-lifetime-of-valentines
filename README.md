@@ -10,7 +10,9 @@ Built with **React**, **Vite**, and **Supabase**. Secure, responsive, and design
 
 - **Couple's Timeline**: Log special dates, future plans, and past memories.
 - **Media Gallery**: Upload photos and videos directly to a private cloud storage.
+- **Media Manager**: Review and delete photos/videos to keep your improved gallery clean.
 - **Message Board**: A dedicated space for sweet notes to each other.
+- **Dark Mode / System Theme**: Fully responsive design with Light, Dark, and System theme support.
 - **Privacy First**: Designed as a **Singleton Instance**. Once you and your partner join, the system **locks** automatically. No random strangers can sign up.
 - **Secure Sharing**: Create strictly time-limited links (e.g., 1 hour, 6 hours) to share your timeline with friends and family without giving them permanent access.
 - **Fail-Safe Auth**: Robust signup flow ensures you never get locked out during setup.
@@ -102,13 +104,7 @@ This is a personal project, but feel free to fork and customize it for your own 
 
 ## 📸 Screenshots
 
-| Dashboard | Join Partner |
-|-----------|--------------|
-| ![Dashboard](./docs/screenshots/alv-full-page-dashboard-ss.png) | ![Join Partner](./docs/screenshots/alv-join-partner-page-ss.png) |
-
-| Login | System Lock |
-|-------|-------------|
-| ![Login](./docs/screenshots/alv-login-page-ss.png) | ![System Lock](./docs/screenshots/alv-system-lock-page-ss.png) |
+*(Screenshots coming soon - see the live demo video)*
 
 ---
 

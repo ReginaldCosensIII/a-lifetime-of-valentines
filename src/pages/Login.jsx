@@ -73,7 +73,7 @@ export default function Login() {
                     <span className="brand-gradient-text">A Lifetime of Valentines</span>
                     <span> 💖</span>
                 </h1>
-                <p style={{ color: '#888', marginTop: '0.5rem' }}>Sign in to your love story</p>
+                <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>Sign in to your love story</p>
             </div>
 
             <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
@@ -92,7 +92,7 @@ export default function Login() {
 
                     <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                         <div>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#555' }}>Email</label>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: 'var(--primary-color)' }}>Email</label>
                             <input
                                 type="email"
                                 value={email}
@@ -105,7 +105,7 @@ export default function Login() {
 
                         <div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                                <label style={{ fontWeight: '500', color: '#555' }}>Password</label>
+                                <label style={{ fontWeight: '500', color: 'var(--primary-color)' }}>Password</label>
                                 <Link to="/forgot-password" style={{ fontSize: '0.8rem', color: '#d6336c', textDecoration: 'none' }}>Forgot?</Link>
                             </div>
                             <div className="password-wrapper">
@@ -139,7 +139,7 @@ export default function Login() {
                                 Sign Up
                             </a>
                         </p>
-                        <p style={{ fontSize: '0.9rem', color: '#666' }}>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                             Got an invite?{' '}
                             <a href="/register-partner" onClick={(e) => handleLockedNavigation(e, '/register-partner')} style={{ color: '#d6336c', textDecoration: 'none', cursor: 'pointer' }}>
                                 Join Partner

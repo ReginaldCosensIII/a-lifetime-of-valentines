@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import './ThemeOverrides.css';
 
 export default function PlansTimeline({ coupleId, demoMode, demoData }) {
     const [plans, setPlans] = useState([]);
@@ -105,7 +106,7 @@ export default function PlansTimeline({ coupleId, demoMode, demoData }) {
         <div className="timeline-container">
             <h3>💌 Valentine's Timeline</h3>
 
-            <form onSubmit={handleSubmit} className="plan-form" style={{ background: 'rgba(255, 255, 255, 0.8)', padding: '1rem', borderRadius: '8px', marginBottom: '2rem' }}>
+            <form onSubmit={handleSubmit} className="plan-form">
                 <h4>{editingId ? 'Edit Plan' : 'Add New Plan'}</h4>
                 <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                     <div style={{ flex: 1 }}>
@@ -136,15 +137,15 @@ export default function PlansTimeline({ coupleId, demoMode, demoData }) {
                     <p style={{ textAlign: 'center', color: '#666' }}>No plans recorded yet. Start your timeline!</p>
                 ) : (
                     plans.map(plan => (
-                        <div key={plan.id} className="plan-card" style={{ background: 'white', padding: '1rem', borderRadius: '8px', marginBottom: '1rem', borderLeft: '4px solid #ff69b4', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                        <div key={plan.id} className="plan-card">
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                 <div>
-                                    <h4 style={{ margin: 0, color: '#d6336c' }}>{plan.title}</h4>
-                                    <small style={{ color: '#888' }}>{new Date(plan.event_date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</small>
+                                    <h4>{plan.title}</h4>
+                                    <small>{new Date(plan.event_date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</small>
                                 </div>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                    <button onClick={() => handleEdit(plan)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem' }}>✏️</button>
-                                    <button onClick={() => handleDelete(plan.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem' }}>🗑️</button>
+                                <div className="plan-card-actions">
+                                    <button onClick={() => handleEdit(plan)}>✏️</button>
+                                    <button onClick={() => handleDelete(plan.id)}>🗑️</button>
                                 </div>
                             </div>
                             {plan.location && <p style={{ margin: '0.5rem 0 0', fontStyle: 'italic' }}>📍 {plan.location}</p>}
