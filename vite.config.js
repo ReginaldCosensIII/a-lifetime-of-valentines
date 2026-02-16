@@ -10,8 +10,8 @@ export default defineConfig({
             registerType: 'autoUpdate',
             includeAssets: ['pwa-icons/ltv-wpa-icon-180x180.png'],
             manifest: {
-                name: 'A Lifetime of Valentines',
-                short_name: 'Valentines',
+                name: 'A Lifetime of Valentines 💖',
+                short_name: 'Lifetime 💖', // Kept shorter for home screen (12 chars max ideal), main name used for install
                 description: 'A shared timeline of love and memories.',
                 theme_color: '#fff9fa',
                 background_color: '#fff9fa',
