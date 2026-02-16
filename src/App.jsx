@@ -157,11 +157,13 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData, han
     if (!displayCouple) {
         return (
             <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
-                <h3>Starting your journey... 💖</h3>
-                <p>We are setting up your personalized dashboard.</p>
-                <button className="primary" onClick={() => window.location.reload()}>
-                    Click to Retry
-                </button>
+                <div className="card" style={{ padding: '2rem' }}>
+                    <h3>Starting your journey... 💖</h3>
+                    <p>We are setting up your personalized dashboard.</p>
+                    <button className="primary" onClick={() => window.location.reload()}>
+                        Click to Retry
+                    </button>
+                </div>
             </div>
         )
     }
@@ -186,7 +188,7 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData, han
                             </div>
                         )}
                         <button onClick={() => setShowShareModal(true)} className="secondary" style={{ whiteSpace: 'nowrap' }}>
-                            🔗 Share
+                            <span className="hide-on-mobile">🔗</span> Share
                         </button>
                         <button onClick={handleSignOut} className="secondary" style={{ whiteSpace: 'nowrap' }}>Sign Out</button>
                         <button
@@ -292,12 +294,13 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData, han
                     ) : (
                         <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
                             {/* Empty State / Loading */}
-                            {/* If we are here, we are not loading, and we have no couple. */}
-                            {/* This should act as the "Start Journey" state if Demo is exited */}
-                            <h2>Ready to write your own story?</h2>
-                            <button className="primary" onClick={() => window.location.href = '/setup'}>
-                                Setup My Page
-                            </button>
+                            <div className="card" style={{ padding: '2rem' }}>
+                                <h2>Ready to write your own story?</h2>
+                                <p>No couple data found for your account.</p>
+                                <button className="primary" onClick={() => window.location.href = '/setup'}>
+                                    Setup My Page
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -386,12 +389,14 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData, han
                                     value={theme}
                                     onChange={(e) => setTheme(e.target.value)}
                                     style={{
-                                        padding: '4px 8px',
+                                        padding: '4px 2px',
                                         borderRadius: '6px',
                                         border: '1px solid var(--border-color)',
                                         background: 'var(--card-bg)',
                                         color: 'var(--text-color)',
-                                        fontSize: '0.9rem'
+                                        fontSize: '0.8rem', // Smaller font for mobile
+                                        width: '100%',
+                                        minWidth: '100px'
                                     }}
                                 >
                                     <option value="light">☀️ Light</option>
@@ -541,6 +546,7 @@ function App() {
 
                 // CRITICAL FIX: Do NOT show demo mode for authenticated users.
                 // Leave couple as null (or empty object) so the Dashboard can show the "Setup" state.
+                console.warn('[App] Setting couple to NULL. User will see Setup screen.');
                 setShowDemo(false);
                 setCouple(null);
             }

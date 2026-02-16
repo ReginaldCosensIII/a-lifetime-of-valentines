@@ -118,8 +118,8 @@ button {
   top: 1rem;
   z-index: 1000;
 
-  width: 95%;
-  /* Mobile: 95% */
+  width: 98%;
+  /* Mobile: 98% (Flush edges) */
   max-width: 1000px;
   margin: 0 auto;
   border-radius: 50px;
@@ -140,10 +140,36 @@ button {
 }
 
 /* Desktop Overrides */
+/* Desktop Overrides */
 @media (min-width: 768px) {
   .glass-header {
     width: 70%;
     padding: 0.8rem 2rem;
+  }
+}
+
+/* Dark Mode Header Override */
+[data-theme="dark"] .glass-header {
+  background: rgba(30, 15, 20, 0.95);
+  border-color: rgba(255, 105, 180, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Base Textarea Sytling */
+textarea {
+  background: var(--input-bg);
+  color: var(--text-color);
+}
+
+/* Mobile Utilities for Header */
+@media (max-width: 600px) {
+  .header-btn-text {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.8rem;
+  }
+
+  .hide-on-mobile {
+    display: none;
   }
 }
 
