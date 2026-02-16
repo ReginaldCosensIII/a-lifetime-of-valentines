@@ -21,6 +21,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import UpdatePassword from './pages/UpdatePassword'
 import SettingsDrawer, { SettingsSection, SettingsItem } from './components/SettingsDrawer'
 import MediaManager from './components/MediaManager'
+import './components/ThemeOverrides.css'
 
 function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData, handleToggleDemo, handleClearDashboard }) {
     const [inviteSending, setInviteSending] = useState(false)
@@ -215,15 +216,13 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData, han
 
                             {/* STATUS BANNER (If waiting) - text modified for demo */}
                             {!displayCouple.partner_user_id && !showDemo && (
-                                <div className="card" style={{ maxWidth: '600px', margin: '0 auto 2rem auto', textAlign: 'center', background: '#fff9fa', border: '1px dashed #ffb6c1' }}>
-                                    <div className="card" style={{ maxWidth: '600px', margin: '0 auto 2rem auto', textAlign: 'center', background: '#fff9fa', border: '1px dashed #ffb6c1' }}>
-                                        <h3>Waiting for Partner... ⏳</h3>
-                                        <p>Your timeline is technically active, but it looks better with two!</p>
-                                        <p>Share your invite code: <strong>{displayCouple.invite_code}</strong></p>
-                                        <button onClick={() => setShowInviteModal(true)} className="primary">
-                                            Send Invite Email 💌
-                                        </button>
-                                    </div>
+                                <div className="waiting-card">
+                                    <h3>Waiting for Partner... ⏳</h3>
+                                    <p>Your timeline is technically active, but it looks better with two!</p>
+                                    <p>Share your invite code: <strong>{displayCouple.invite_code}</strong></p>
+                                    <button onClick={() => setShowInviteModal(true)} className="primary">
+                                        Send Invite Email 💌
+                                    </button>
                                 </div>
                             )}
 
@@ -300,9 +299,9 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData, han
                                     <h3 style={{ color: '#d6336c' }}>Invite Email Failed 😓</h3>
                                     <p>But don't worry! You can send these details to your partner manually:</p>
 
-                                    <div style={{ background: '#fff9fa', padding: '1rem', borderRadius: '8px', border: '1px dashed #ffb6c1', margin: '1rem 0', textAlign: 'left' }}>
-                                        <p style={{ margin: '0.5rem 0' }}><strong>Invite Code:</strong> <code style={{ fontSize: '1.2rem', color: '#d6336c' }}>{manualInviteData.code}</code></p>
-                                        <p style={{ margin: '0.5rem 0' }}><strong>Temp Password:</strong> <code style={{ fontSize: '1.2rem', color: '#d6336c' }}>{manualInviteData.password}</code></p>
+                                    <div className="invite-failed-box">
+                                        <p style={{ margin: '0.5rem 0' }}><strong>Invite Code:</strong> <code>{manualInviteData.code}</code></p>
+                                        <p style={{ margin: '0.5rem 0' }}><strong>Temp Password:</strong> <code>{manualInviteData.password}</code></p>
                                         <p style={{ margin: '0.5rem 0' }}><strong>Link:</strong> <span style={{ fontSize: '0.9rem' }}>{window.location.origin}/register-partner?code={manualInviteData.code}</span></p>
                                     </div>
 

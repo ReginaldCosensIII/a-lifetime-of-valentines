@@ -1,0 +1,90 @@
+/* Theme Overrides for Components with Hardcoded Styles */
+
+/* App.jsx - Waiting for Partner Card */
+.waiting-card {
+    background: var(--card-bg);
+    /* Was #fff9fa */
+    border: 1px dashed var(--secondary-color);
+    /* Was #ffb6c1 */
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+    text-align: center;
+    padding: 2rem;
+    /* Add padding here since we remove inline */
+    border-radius: 16px;
+    /* Standard card radius */
+}
+
+/* App.jsx - Invite Failed Box */
+.invite-failed-box {
+    background: var(--item-bg);
+    /* Was #fff9fa */
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px dashed var(--secondary-color);
+    margin: 1rem 0;
+    text-align: left;
+}
+
+.invite-failed-box code {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+/* PlansTimeline.jsx - Form */
+.plan-form {
+    background: var(--glass-bg);
+    /* Was rgba(255, 255, 255, 0.8) */
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+    /* Add border for definition */
+}
+
+/* PlansTimeline.jsx - Plan Card */
+.plan-card {
+    background: var(--card-bg);
+    /* Was white */
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--primary-color);
+    /* Was #ff69b4 */
+    box-shadow: var(--shadow-sm);
+    /* Was 0 2px 4px ... */
+    color: var(--text-color);
+}
+
+.plan-card h4 {
+    margin: 0;
+    color: var(--primary-color);
+    /* Was #d6336c */
+}
+
+.plan-card small {
+    color: var(--text-muted);
+    /* Was #888 */
+}
+
+.plan-card-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    /* Icon color */
+    opacity: 0.8;
+    padding: 0 0.25rem;
+}
+
+.plan-card-actions button:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* PartnerMessage.jsx overrides (Anticipated) */
+.message-card {
+    background: var(--card-bg);
+    color: var(--text-color);
+}
