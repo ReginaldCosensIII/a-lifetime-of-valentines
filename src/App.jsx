@@ -384,22 +384,22 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData, han
                         title="Theme"
                         description="Light, Dark, or System"
                         action={
-                            <div className="toggle-wrapper" style={{ width: 'auto', background: 'var(--item-bg)', padding: '2px', borderRadius: '8px', display: 'flex', gap: '4px' }}>
+                            <div className="toggle-wrapper" style={{ width: 'auto', background: 'var(--item-bg)', padding: '2px', borderRadius: '8px', display: 'flex', gap: '4px', transform: 'translateY(-2px)' /* Visual tweak to center against text */ }}>
                                 <select
                                     value={theme}
                                     onChange={(e) => setTheme(e.target.value)}
                                     style={{
-                                        padding: '0 8px', /* Remove vertical padding to let height center it */
-                                        height: '35px', /* Slightly taller */
+                                        padding: '0 8px',
+                                        height: '35px',
                                         borderRadius: '6px',
                                         border: '1px solid var(--border-color)',
                                         background: 'var(--card-bg)',
                                         color: 'var(--text-color)',
-                                        fontSize: '0.9rem', /* Restore slightly larger font */
+                                        fontSize: '0.9rem',
                                         width: '100%',
                                         minWidth: '140px',
                                         cursor: 'pointer',
-                                        lineHeight: '35px' /* Help centering */
+                                        lineHeight: '35px'
                                     }}
                                 >
                                     <option value="light">☀️ Light</option>
