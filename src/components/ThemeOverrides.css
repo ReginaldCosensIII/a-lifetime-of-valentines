@@ -13,6 +13,7 @@
     /* Add padding here since we remove inline */
     border-radius: 16px;
     /* Standard card radius */
+    color: var(--text-color);
 }
 
 /* App.jsx - Invite Failed Box */
@@ -24,6 +25,7 @@
     border: 1px dashed var(--secondary-color);
     margin: 1rem 0;
     text-align: left;
+    color: var(--text-color);
 }
 
 .invite-failed-box code {
@@ -40,6 +42,7 @@
     margin-bottom: 2rem;
     border: 1px solid var(--border-color);
     /* Add border for definition */
+    color: var(--text-color);
 }
 
 /* PlansTimeline.jsx - Plan Card */
@@ -81,6 +84,18 @@
 .plan-card-actions button:hover {
     opacity: 1;
     transform: scale(1.1);
+}
+
+/* MediaCarousel.jsx - Empty State */
+.empty-carousel-state {
+    text-align: center;
+    padding: 2rem;
+    background: var(--glass-bg);
+    /* Was rgba(255,255,255,0.5) */
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
 }
 
 /* PartnerMessage.jsx overrides (Anticipated) */

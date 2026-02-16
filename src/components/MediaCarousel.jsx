@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import './ThemeOverrides.css';
 
 export default function MediaCarousel({ coupleId, demoMode, demoData }) {
     const [media, setMedia] = useState([]);
@@ -77,7 +78,7 @@ export default function MediaCarousel({ coupleId, demoMode, demoData }) {
 
     if (loading) return null;
     if (media.length === 0) return (
-        <div style={{ textAlign: 'center', padding: '2rem', background: 'rgba(255,255,255,0.5)', borderRadius: '8px', marginBottom: '1rem' }}>
+        <div className="empty-carousel-state">
             <p style={{ margin: 0 }}>Start capturing memories to see them here! 📸</p>
         </div>
     );

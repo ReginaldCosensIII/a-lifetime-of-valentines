@@ -93,7 +93,7 @@ export default function SignUp() {
                     <span className="brand-gradient-text">A Lifetime of Valentines</span>
                     <span> 💖</span>
                 </h1>
-                <p style={{ color: '#888', marginTop: '0.5rem' }}>Start your journey together</p>
+                <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>Start your journey together</p>
             </div>
 
             <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
@@ -139,7 +139,7 @@ export default function SignUp() {
 
                             <form onSubmit={handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#555' }}>Your Email</label>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: 'var(--primary-color)' }}>Your Email</label>
                                     <input
                                         type="email"
                                         value={email}
@@ -151,7 +151,7 @@ export default function SignUp() {
                                 </div>
 
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#555' }}>Password</label>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: 'var(--primary-color)' }}>Password</label>
                                     <div className="password-wrapper">
                                         <input
                                             type={showPassword ? "text" : "password"}
@@ -172,7 +172,7 @@ export default function SignUp() {
                                 </div>
 
                                 <div style={{ borderTop: '1px dashed #eee', paddingTop: '1rem' }}>
-                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#555' }}>Partner's Email (Optional)</label>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: 'var(--primary-color)' }}>Partner's Email (Optional)</label>
                                     <input
                                         type="email"
                                         value={partnerEmail}
@@ -180,7 +180,7 @@ export default function SignUp() {
                                         placeholder="Enter your partner's email"
                                         style={{ width: '100%' }}
                                     />
-                                    <p style={{ fontSize: '0.8rem', color: '#888', marginTop: '0.25rem' }}>
+                                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
                                         We'll use this to link their account when they join.
                                     </p>
                                 </div>

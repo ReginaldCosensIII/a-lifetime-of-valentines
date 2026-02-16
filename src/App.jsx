@@ -30,12 +30,11 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData, han
     const [showShareModal, setShowShareModal] = useState(false)
     const [showSettings, setShowSettings] = useState(false)
     const [showMediaManager, setShowMediaManager] = useState(false)
-    const [darkMode, setDarkMode] = useState(() => {
+    const [theme, setTheme] = useState(() => {
         if (typeof window !== 'undefined') {
-            return localStorage.getItem('theme') === 'dark' ||
-                (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            return localStorage.getItem('themePreference') || 'system';
         }
-        return false;
+        return 'system';
     })
     const [isMemoriesExpanded, setIsMemoriesExpanded] = useState(false)
     const [manualInviteData, setManualInviteData] = useState(null)
@@ -50,16 +49,37 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData, han
         }
     }, [couple])
 
-    // Dark Mode Effect
+    // Theme Effect
     useEffect(() => {
-        if (darkMode) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.removeAttribute('data-theme');
-            localStorage.setItem('theme', 'light');
+        const applyTheme = (targetTheme) => {
+            let isDark = false;
+            if (targetTheme === 'system') {
+                isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            } else {
+                isDark = targetTheme === 'dark';
+            }
+
+            if (isDark) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+            }
+        };
+
+        applyTheme(theme);
+        localStorage.setItem('themePreference', theme);
+
+        // System listener
+        if (theme === 'system') {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const handleChange = (e) => {
+                if (e.matches) document.documentElement.setAttribute('data-theme', 'dark');
+                else document.documentElement.removeAttribute('data-theme');
+            };
+            mediaQuery.addEventListener('change', handleChange);
+            return () => mediaQuery.removeEventListener('change', handleChange);
         }
-    }, [darkMode]);
+    }, [theme]);
 
     const handleSignOut = async () => {
         await supabase.auth.signOut()
@@ -358,18 +378,27 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData, han
                 <SettingsSection title="App Controls">
                     <SettingsItem
                         icon="🌙"
-                        title="Dark Mode"
-                        description="Easier on the eyes"
+                        title="Theme"
+                        description="Light, Dark, or System"
                         action={
-                            <label className="toggle-wrapper">
-                                <input
-                                    type="checkbox"
-                                    className="toggle-checkbox"
-                                    checked={darkMode}
-                                    onChange={(e) => setDarkMode(e.target.checked)}
-                                />
-                                <span className="toggle-slider"></span>
-                            </label>
+                            <div className="toggle-wrapper" style={{ width: 'auto', background: 'var(--item-bg)', padding: '2px', borderRadius: '8px', display: 'flex', gap: '4px' }}>
+                                <select
+                                    value={theme}
+                                    onChange={(e) => setTheme(e.target.value)}
+                                    style={{
+                                        padding: '4px 8px',
+                                        borderRadius: '6px',
+                                        border: '1px solid var(--border-color)',
+                                        background: 'var(--card-bg)',
+                                        color: 'var(--text-color)',
+                                        fontSize: '0.9rem'
+                                    }}
+                                >
+                                    <option value="light">☀️ Light</option>
+                                    <option value="dark">🌙 Dark</option>
+                                    <option value="system">💻 System</option>
+                                </select>
+                            </div>
                         }
                     />
                     <SettingsItem

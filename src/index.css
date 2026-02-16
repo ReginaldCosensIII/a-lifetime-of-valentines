@@ -16,6 +16,7 @@
   --border-color: #eee;
   --item-bg: #f8f9fa;
   --item-bg-hover: #eee;
+  --input-bg: #ffffff;
 }
 
 [data-theme="dark"] {
@@ -33,6 +34,7 @@
   --item-bg-hover: rgba(255, 105, 180, 0.2);
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
+  --input-bg: #3a252b;
 }
 
 *,
@@ -219,6 +221,8 @@ select {
   padding: 0.8rem;
   font-family: inherit;
   transition: border-color 0.2s;
+  background: var(--input-bg);
+  color: var(--text-color);
 }
 
 input:focus,
