@@ -25,7 +25,17 @@ export default function MediaManager({ coupleId, isOpen, onClose }) {
                 .order('created_at', { ascending: false })
 
             if (error) throw error
-            setMedia(data)
+
+            // Generate public URLs for all items
+            const mediaWithUrls = data.map(item => {
+                const { data: urlData } = supabase.storage.from('memories').getPublicUrl(item.storage_path)
+                return {
+                    ...item,
+                    url: urlData.publicUrl
+                }
+            })
+
+            setMedia(mediaWithUrls)
         } catch (error) {
             console.error('Error fetching media:', error)
         } finally {
@@ -50,7 +60,7 @@ export default function MediaManager({ coupleId, isOpen, onClose }) {
         setDeleting(true)
         try {
             const itemsToDelete = media.filter(m => selectedIds.has(m.id))
-            const filePaths = itemsToDelete.map(m => m.file_path)
+            const filePaths = itemsToDelete.map(m => m.storage_path) // Fixed: was file_path
 
             // 1. Delete from Storage
             const { error: storageError } = await supabase.storage
