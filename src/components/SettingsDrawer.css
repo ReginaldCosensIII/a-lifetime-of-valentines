@@ -19,8 +19,8 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--card-bg, #ffffff);
-    color: var(--text-color, #333);
+    background: var(--card-bg);
+    color: var(--text-color);
     border-top-left-radius: 24px;
     border-top-right-radius: 24px;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
@@ -59,7 +59,7 @@
 
 .settings-header {
     padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border-color, #eee);
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -82,7 +82,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
     margin-bottom: 0.75rem;
 }
 
@@ -91,13 +91,13 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem 1rem;
-    background: var(--item-bg, #f8f9fa);
+    background: var(--item-bg);
     border-radius: 12px;
     transition: background 0.2s;
 }
 
 .settings-item:hover {
-    background: var(--item-bg-hover, #eee);
+    background: var(--item-bg-hover);
 }
 
 .settings-icon {
@@ -109,13 +109,13 @@
     margin: 0;
     font-size: 1rem;
     font-weight: 500;
-    color: var(--text-color, #333);
+    color: var(--text-color);
 }
 
 .settings-info p {
     margin: 0;
     font-size: 0.75rem;
-    color: var(--text-muted, #666);
+    color: var(--text-muted);
 }
 
 /* Toggle Switch */

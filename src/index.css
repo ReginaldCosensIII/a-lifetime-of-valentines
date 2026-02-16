@@ -20,19 +20,19 @@
 
 [data-theme="dark"] {
   --primary-color: #ff69b4;
-  --secondary-color: #ff8cc6;
-  --bg-gradient: linear-gradient(135deg, #1f1216 0%, #2d1b2e 100%);
-  --glass-bg: rgba(30, 20, 25, 0.85);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-  --text-color: #f0f0f0;
-  --text-muted: #aaa;
-  --card-bg: #2a2a2a;
-  --bg-secondary: #1a1a1a;
-  --border-color: #444;
-  --item-bg: #333;
-  --item-bg-hover: #444;
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --secondary-color: #ff1493;
+  --bg-gradient: linear-gradient(135deg, #1a0b0e 0%, #2d1218 100%);
+  --glass-bg: rgba(45, 27, 34, 0.9);
+  --glass-border: 1px solid rgba(255, 105, 180, 0.2);
+  --text-color: #ffe0e6;
+  --text-muted: #ffb6c1;
+  --card-bg: #2d1b22;
+  --bg-secondary: #1f0f13;
+  --border-color: #5c2c3b;
+  --item-bg: rgba(255, 105, 180, 0.1);
+  --item-bg-hover: rgba(255, 105, 180, 0.2);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
 }
 
 *,
@@ -154,6 +154,7 @@ button {
   /* Force single line */
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--primary-color);
 }
 
 .brand-gradient-text {
