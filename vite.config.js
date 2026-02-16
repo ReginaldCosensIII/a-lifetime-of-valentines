@@ -8,7 +8,7 @@ export default defineConfig({
         react(),
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.ico', 'pwa-icons/ltv-wpa-icon-180x180.png', 'masked-icon.svg'],
+            includeAssets: ['pwa-icons/ltv-wpa-icon-180x180.png'],
             manifest: {
                 name: 'A Lifetime of Valentines',
                 short_name: 'Valentines',
