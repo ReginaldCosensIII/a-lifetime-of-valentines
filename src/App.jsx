@@ -19,12 +19,23 @@ import LoadingHeart from './components/LoadingHeart'
 import logger from './utils/logger'
 import ForgotPassword from './pages/ForgotPassword'
 import UpdatePassword from './pages/UpdatePassword'
+import SettingsDrawer, { SettingsSection, SettingsItem } from './components/SettingsDrawer'
+import MediaManager from './components/MediaManager'
 
-function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData }) {
+function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData, handleToggleDemo, handleClearDashboard }) {
     const [inviteSending, setInviteSending] = useState(false)
     const [valentinePlans, setValentinePlans] = useState('')
     const [showInviteModal, setShowInviteModal] = useState(false)
     const [showShareModal, setShowShareModal] = useState(false)
+    const [showSettings, setShowSettings] = useState(false)
+    const [showMediaManager, setShowMediaManager] = useState(false)
+    const [darkMode, setDarkMode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('theme') === 'dark' ||
+                (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        }
+        return false;
+    })
     const [isMemoriesExpanded, setIsMemoriesExpanded] = useState(false)
     const [manualInviteData, setManualInviteData] = useState(null)
 
@@ -37,6 +48,17 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData }) {
             setPartnerEmail(couple.partner_email)
         }
     }, [couple])
+
+    // Dark Mode Effect
+    useEffect(() => {
+        if (darkMode) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }, [darkMode]);
 
     const handleSignOut = async () => {
         await supabase.auth.signOut()
@@ -146,6 +168,14 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData }) {
                             🔗 Share
                         </button>
                         <button onClick={handleSignOut} className="secondary" style={{ whiteSpace: 'nowrap' }}>Sign Out</button>
+                        <button
+                            onClick={() => setShowSettings(true)}
+                            className="secondary"
+                            style={{ padding: '0.5rem 0.8rem', fontSize: '1.2rem', lineHeight: 1 }}
+                            aria-label="Settings"
+                        >
+                            ⋮
+                        </button>
                     </div>
                 </header>
 
@@ -323,6 +353,92 @@ function Dashboard({ session, couple, showDemo, handleExitDemo, refreshData }) {
                     </div>
                 )
             }
+
+            {/* Settings Drawer */}
+            <SettingsDrawer isOpen={showSettings} onClose={() => setShowSettings(false)}>
+                <SettingsSection title="App Controls">
+                    <SettingsItem
+                        icon="🌙"
+                        title="Dark Mode"
+                        description="Easier on the eyes"
+                        action={
+                            <label className="toggle-wrapper">
+                                <input
+                                    type="checkbox"
+                                    className="toggle-checkbox"
+                                    checked={darkMode}
+                                    onChange={(e) => setDarkMode(e.target.checked)}
+                                />
+                                <span className="toggle-slider"></span>
+                            </label>
+                        }
+                    />
+                    <SettingsItem
+                        icon="🎭"
+                        title="Demo Mode"
+                        description="Overlay sample data (Private)"
+                        action={
+                            <label className="toggle-wrapper">
+                                <input
+                                    type="checkbox"
+                                    className="toggle-checkbox"
+                                    checked={showDemo}
+                                    onChange={(e) => handleToggleDemo(e.target.checked)}
+                                />
+                                <span className="toggle-slider"></span>
+                            </label>
+                        }
+                    />
+                </SettingsSection>
+
+                <SettingsSection title="Danger Zone">
+                    <SettingsItem
+                        icon="🗑️"
+                        title="Clear Dashboard"
+                        description="Delete all entries & media"
+                        action={
+                            <button
+                                className="secondary"
+                                style={{ color: 'red', borderColor: 'pink' }}
+                                onClick={handleClearDashboard}
+                            >
+                                Clear
+                            </button>
+                        }
+                    />
+                </SettingsSection>
+
+                <SettingsSection title="Content">
+                    <SettingsItem
+                        icon="📸"
+                        title="Manage Media"
+                        description="Delete photos & videos"
+                        action={
+                            <button
+                                className="secondary"
+                                onClick={() => {
+                                    setShowSettings(false);
+                                    setShowMediaManager(true);
+                                }}
+                            >
+                                Open
+                            </button>
+                        }
+                    />
+                </SettingsSection>
+            </SettingsDrawer>
+
+            {/* Media Manager Modal */}
+            {showMediaManager && (
+                <MediaManager
+                    coupleId={couple?.id}
+                    isOpen={showMediaManager}
+                    onClose={() => {
+                        setShowMediaManager(false);
+                        refreshData(session.user.id); // Refresh main view to reflect deletions
+                    }}
+                />
+            )}
         </>
     )
 }
@@ -430,6 +546,40 @@ function App() {
             }
         } catch (err) {
             console.error('Error exiting demo:', err);
+        }
+    };
+
+    const handleToggleDemo = (shouldShow) => {
+        if (shouldShow) {
+            setShowDemo(true);
+        } else {
+            handleExitDemo();
+        }
+    };
+
+    const handleClearDashboard = async (targetCoupleId) => {
+        if (!confirm('⚠️ ARE YOU SURE? ⚠️\n\nThis will permanently delete ALL timeline entries and photos for you and your partner.\n\nThis action cannot be undone.')) {
+            return;
+        }
+
+        // Double confirmation for safety
+        if (!confirm('Last chance: Are you absolutely sure you want to wipe everything?')) {
+            return;
+        }
+
+        try {
+            const { error } = await supabase.rpc('clear_couple_data', { target_couple_id: targetCoupleId });
+            if (error) throw error;
+
+            alert('Dashboard cleared successfully.');
+
+            // Refresh data to show empty state
+            if (session?.user?.id) {
+                await fetchCoupleData(session.user.id);
+            }
+        } catch (error) {
+            console.error('Error clearing dashboard:', error);
+            alert('Failed to clear dashboard: ' + error.message);
         }
     };
 
@@ -563,6 +713,8 @@ function App() {
                             showDemo={showDemo}
                             handleExitDemo={handleExitDemo}
                             refreshData={fetchCoupleData}
+                            handleToggleDemo={handleToggleDemo}
+                            handleClearDashboard={() => handleClearDashboard(couple.id)}
                         /> :
                         <Navigate to="/login" />
                 } />
