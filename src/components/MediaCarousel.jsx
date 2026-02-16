@@ -85,9 +85,20 @@ export default function MediaCarousel({ coupleId, demoMode, demoData }) {
 
     const currentItem = media[currentIndex];
 
-    const url = demoMode
-        ? currentItem.url
-        : supabase.storage.from('memories').getPublicUrl(currentItem.storage_path).data.publicUrl;
+    // Guard clause: If currentItem is missing or malformed, don't crash
+    if (!currentItem) return null;
+
+    let url = currentItem.url;
+    if (!demoMode && currentItem.storage_path) {
+        try {
+            const { data } = supabase.storage.from('memories').getPublicUrl(currentItem.storage_path);
+            if (data) url = data.publicUrl;
+        } catch (err) {
+            console.warn('Error getting public URL:', err);
+        }
+    }
+
+    if (!url) return null; // Skip if no URL found
 
     return (
         <div
